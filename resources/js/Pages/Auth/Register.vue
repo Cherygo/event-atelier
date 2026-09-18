@@ -26,7 +26,7 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout class="ea-auth-register">
         <Head title="Register" />
 
         <header class="ea-auth-card-header">
