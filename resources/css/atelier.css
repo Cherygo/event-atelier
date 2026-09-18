@@ -3076,7 +3076,9 @@
 .ea-auth-card-header h2 { margin: 0; font: 400 clamp(40px, 4vw, 58px)/1.02 var(--ea-display); letter-spacing: -.025em; text-wrap: balance; }
 .ea-auth-card-header p { max-width: 47ch; margin: 14px 0 0; color: var(--ea-muted); line-height: 1.65; }
 .ea-auth-form { display: grid; gap: 20px; }
-.ea-auth-field { display: grid; gap: 8px; }
+.ea-auth-field { display: grid; gap: 8px; align-content: start; }
+.ea-field-feedback { min-height: 20px; }
+.ea-field-feedback p { line-height: 20px; }
 .ea-auth-card label { color: var(--ea-ink); font: 600 14px/1.4 var(--ea-sans); }
 .ea-auth-card input:not([type='checkbox']) { width: 100%; min-height: 50px; padding: 11px 13px; border: 1px solid #aab49d; border-radius: 4px; background: var(--ea-white); color: var(--ea-ink); box-shadow: none; font: 400 16px/1.4 var(--ea-sans); transition: border-color .2s var(--ea-ease-out), background .2s var(--ea-ease-out); }
 .ea-auth-card input:not([type='checkbox']):hover { border-color: #7f8e73; }
@@ -3100,6 +3102,7 @@
 .ea-auth-status { margin-bottom: 22px; padding: 12px 14px; border: 1px solid #c8d1ba; border-radius: 4px; background: var(--ea-sage); color: #3a5636; font-size: 14px; }
 .ea-auth-foot { margin: 28px auto 0; color: var(--ea-muted); font-size: 12px; text-align: center; }
 .ea-auth-register .ea-auth-panel { padding-top: 24px; padding-bottom: 24px; }
+.ea-auth-login .ea-auth-panel { padding-top: 32px; padding-bottom: 32px; }
 .ea-auth-register .ea-auth-card-header { margin-bottom: 20px; }
 .ea-auth-register .ea-auth-card-header h2 { font-size: 40px; }
 .ea-auth-register .ea-auth-card-header p { margin-top: 10px; }

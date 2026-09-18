@@ -7,6 +7,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { nextTick } from 'vue';
+import { useAuthValidation } from '@/authValidation';
 
 defineProps({
     canResetPassword: {
@@ -23,19 +24,27 @@ const form = useForm({
     remember: false,
 });
 
+const { errors, touch, validate } = useAuthValidation(form, false);
+
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+};
+
 const submit = () => {
+    if (!validate()) {
+        focusError();
+        return;
+    }
     form.post(route('login'), {
-        onFinish: () => form.reset('password'),
-        onError: async () => {
-            await nextTick();
-            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
-        },
+        onSuccess: () => form.reset('password'),
+        onError: focusError,
     });
 };
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout class="ea-auth-login">
         <Head title="Log in" />
 
         <header class="ea-auth-card-header">
@@ -47,7 +56,7 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form class="ea-auth-form" @submit.prevent="submit">
+        <form class="ea-auth-form" novalidate @submit.prevent="submit">
             <div class="ea-auth-field">
                 <InputLabel for="email" value="Email" />
 
@@ -56,14 +65,15 @@ const submit = () => {
                     type="email"
                     class="block w-full"
                     v-model="form.email"
+                    @blur="touch('email')"
                     required
                     autofocus
                     autocomplete="username"
-                    :aria-invalid="Boolean(form.errors.email)"
-                    :aria-describedby="form.errors.email ? 'login-email-error' : undefined"
+                    :aria-invalid="Boolean(errors.email)"
+                    :aria-describedby="errors.email ? 'login-email-error' : undefined"
                 />
 
-                <InputError id="login-email-error" :message="form.errors.email" />
+                <InputError reserve-space id="login-email-error" :message="errors.email" />
             </div>
 
             <div class="ea-auth-field">
@@ -74,13 +84,14 @@ const submit = () => {
                     type="password"
                     class="block w-full"
                     v-model="form.password"
+                    @blur="touch('password')"
                     required
                     autocomplete="current-password"
-                    :aria-invalid="Boolean(form.errors.password)"
-                    :aria-describedby="form.errors.password ? 'login-password-error' : undefined"
+                    :aria-invalid="Boolean(errors.password)"
+                    :aria-describedby="errors.password ? 'login-password-error' : undefined"
                 />
 
-                <InputError id="login-password-error" :message="form.errors.password" />
+                <InputError reserve-space id="login-password-error" :message="errors.password" />
             </div>
 
             <div class="ea-auth-options">

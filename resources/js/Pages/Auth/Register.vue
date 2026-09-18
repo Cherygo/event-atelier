@@ -6,6 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { nextTick } from 'vue';
+import { useAuthValidation } from '@/authValidation';
 
 const form = useForm({
     name: '',
@@ -14,13 +15,21 @@ const form = useForm({
     password_confirmation: '',
 });
 
+const { errors, touch, validate } = useAuthValidation(form, true);
+
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+};
+
 const submit = () => {
+    if (!validate()) {
+        focusError();
+        return;
+    }
     form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-        onError: async () => {
-            await nextTick();
-            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
-        },
+        onSuccess: () => form.reset('password', 'password_confirmation'),
+        onError: focusError,
     });
 };
 </script>
@@ -34,7 +43,7 @@ const submit = () => {
             <p>Create an account now; shape the occasion one detail at a time.</p>
         </header>
 
-        <form class="ea-auth-form" @submit.prevent="submit">
+        <form class="ea-auth-form" novalidate @submit.prevent="submit">
             <div class="ea-auth-field">
                 <InputLabel for="name" value="Name" />
 
@@ -43,14 +52,15 @@ const submit = () => {
                     type="text"
                     class="block w-full"
                     v-model="form.name"
+                    @blur="touch('name')"
                     required
                     autofocus
                     autocomplete="name"
-                    :aria-invalid="Boolean(form.errors.name)"
-                    :aria-describedby="form.errors.name ? 'register-name-error' : undefined"
+                    :aria-invalid="Boolean(errors.name)"
+                    :aria-describedby="errors.name ? 'register-name-error' : undefined"
                 />
 
-                <InputError id="register-name-error" :message="form.errors.name" />
+                <InputError reserve-space id="register-name-error" :message="errors.name" />
             </div>
 
             <div class="ea-auth-field">
@@ -61,13 +71,14 @@ const submit = () => {
                     type="email"
                     class="block w-full"
                     v-model="form.email"
+                    @blur="touch('email')"
                     required
                     autocomplete="username"
-                    :aria-invalid="Boolean(form.errors.email)"
-                    :aria-describedby="form.errors.email ? 'register-email-error' : undefined"
+                    :aria-invalid="Boolean(errors.email)"
+                    :aria-describedby="errors.email ? 'register-email-error' : undefined"
                 />
 
-                <InputError id="register-email-error" :message="form.errors.email" />
+                <InputError reserve-space id="register-email-error" :message="errors.email" />
             </div>
 
             <div class="ea-auth-field">
@@ -78,13 +89,14 @@ const submit = () => {
                     type="password"
                     class="block w-full"
                     v-model="form.password"
+                    @blur="touch('password')"
                     required
                     autocomplete="new-password"
-                    :aria-invalid="Boolean(form.errors.password)"
-                    :aria-describedby="form.errors.password ? 'register-password-error' : undefined"
+                    :aria-invalid="Boolean(errors.password)"
+                    :aria-describedby="errors.password ? 'register-password-error' : undefined"
                 />
 
-                <InputError id="register-password-error" :message="form.errors.password" />
+                <InputError reserve-space id="register-password-error" :message="errors.password" />
             </div>
 
             <div class="ea-auth-field">
@@ -98,15 +110,16 @@ const submit = () => {
                     type="password"
                     class="block w-full"
                     v-model="form.password_confirmation"
+                    @blur="touch('password_confirmation')"
                     required
                     autocomplete="new-password"
-                    :aria-invalid="Boolean(form.errors.password_confirmation)"
-                    :aria-describedby="form.errors.password_confirmation ? 'register-password-confirmation-error' : undefined"
+                    :aria-invalid="Boolean(errors.password_confirmation)"
+                    :aria-describedby="errors.password_confirmation ? 'register-password-confirmation-error' : undefined"
                 />
 
-                <InputError
+                <InputError reserve-space
                     id="register-password-confirmation-error"
-                    :message="form.errors.password_confirmation"
+                    :message="errors.password_confirmation"
                 />
             </div>
 
