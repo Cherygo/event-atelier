@@ -25,34 +25,34 @@ const verificationLinkSent = computed(
     <GuestLayout>
         <Head title="Email Verification" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your
-            email address by clicking on the link we just emailed to you? If you
-            didn't receive the email, we will gladly send you another.
-        </div>
+        <header class="ea-auth-card-header">
+            <h2>Check your inbox.</h2>
+            <p>We sent a verification link to your email. Open it to make your planning room ready.</p>
+        </header>
 
         <div
-            class="mb-4 text-sm font-medium text-green-600"
+            class="ea-auth-status"
             v-if="verificationLinkSent"
+            role="status"
         >
             A new verification link has been sent to the email address you
             provided during registration.
         </div>
 
-        <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
+        <form class="ea-auth-form" @submit.prevent="submit">
+            <div class="ea-auth-actions ea-auth-actions-split">
                 <PrimaryButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Resend Verification Email
+                    {{ form.processing ? 'Sending…' : 'Resend verification email' }}
                 </PrimaryButton>
 
                 <Link
                     :href="route('logout')"
                     method="post"
                     as="button"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="ea-auth-link"
                     >Log Out</Link
                 >
             </div>

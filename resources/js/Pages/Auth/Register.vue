@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { nextTick } from 'vue';
 
 const form = useForm({
     name: '',
@@ -16,6 +17,10 @@ const form = useForm({
 const submit = () => {
     form.post(route('register'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
+        onError: async () => {
+            await nextTick();
+            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+        },
     });
 };
 </script>
@@ -24,54 +29,65 @@ const submit = () => {
     <GuestLayout>
         <Head title="Register" />
 
-        <form @submit.prevent="submit">
-            <div>
+        <header class="ea-auth-card-header">
+            <h2>Start your planning room.</h2>
+            <p>Create an account now; shape the occasion one detail at a time.</p>
+        </header>
+
+        <form class="ea-auth-form" @submit.prevent="submit">
+            <div class="ea-auth-field">
                 <InputLabel for="name" value="Name" />
 
                 <TextInput
                     id="name"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.name"
                     required
                     autofocus
                     autocomplete="name"
+                    :aria-invalid="Boolean(form.errors.name)"
+                    :aria-describedby="form.errors.name ? 'register-name-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError id="register-name-error" :message="form.errors.name" />
             </div>
 
-            <div class="mt-4">
+            <div class="ea-auth-field">
                 <InputLabel for="email" value="Email" />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.email"
                     required
                     autocomplete="username"
+                    :aria-invalid="Boolean(form.errors.email)"
+                    :aria-describedby="form.errors.email ? 'register-email-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError id="register-email-error" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
+            <div class="ea-auth-field">
                 <InputLabel for="password" value="Password" />
 
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.password"
                     required
                     autocomplete="new-password"
+                    :aria-invalid="Boolean(form.errors.password)"
+                    :aria-describedby="form.errors.password ? 'register-password-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError id="register-password-error" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
+            <div class="ea-auth-field">
                 <InputLabel
                     for="password_confirmation"
                     value="Confirm Password"
@@ -80,34 +96,33 @@ const submit = () => {
                 <TextInput
                     id="password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.password_confirmation"
                     required
                     autocomplete="new-password"
+                    :aria-invalid="Boolean(form.errors.password_confirmation)"
+                    :aria-describedby="form.errors.password_confirmation ? 'register-password-confirmation-error' : undefined"
                 />
 
                 <InputError
-                    class="mt-2"
+                    id="register-password-confirmation-error"
                     :message="form.errors.password_confirmation"
                 />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Already registered?
-                </Link>
-
+            <div class="ea-auth-actions">
                 <PrimaryButton
-                    class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Register
+                    <span>{{ form.processing ? 'Creating your room…' : 'Create account' }}</span>
                 </PrimaryButton>
             </div>
         </form>
+
+        <p class="ea-auth-alternate">
+            Already have an account?
+            <Link :href="route('login')">Log in</Link>
+        </p>
     </GuestLayout>
 </template>

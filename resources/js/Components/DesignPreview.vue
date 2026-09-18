@@ -242,10 +242,9 @@ function toggleShortlist(vendor) {
         </aside>
 
         <div class="ea-workspace-body">
-            <div class="ea-preview-notice">
+            <div class="ea-preview-notice" role="note" aria-label="Demo workspace notice">
                 <span
-                    ><span class="ea-status-dot"></span> You’re exploring a
-                    sample workspace. Changes aren’t saved.</span
+                    ><span class="ea-status-dot"></span><span><strong>Demo mode</strong> — changes disappear when you leave or reload.</span></span
                 ><Link :href="route('register')"
                     >Create your own <AtelierIcon name="diagonal"
                 /></Link>
@@ -281,16 +280,18 @@ function toggleShortlist(vendor) {
                         </button>
                     </div>
                 </header>
-                <p v-if="feedback" class="ea-feedback" role="status">
-                    {{ feedback
-                    }}<button
-                        class="ea-icon-button"
-                        aria-label="Dismiss message"
-                        @click="feedback = ''"
-                    >
-                        <AtelierIcon name="close" />
-                    </button>
-                </p>
+                <Transition name="ea-feedback">
+                    <p v-if="feedback" class="ea-feedback" role="status">
+                        {{ feedback
+                        }}<button
+                            class="ea-icon-button"
+                            aria-label="Dismiss message"
+                            @click="feedback = ''"
+                        >
+                            <AtelierIcon name="close" />
+                        </button>
+                    </p>
+                </Transition>
 
                 <template v-if="section === 'overview'">
                     <section class="ea-event-banner">
@@ -596,7 +597,11 @@ function toggleShortlist(vendor) {
                                 placeholder="Find a task"
                         /></label>
                     </div>
-                    <div class="ea-task-table">
+                    <TransitionGroup
+                        name="ea-task-shift"
+                        tag="div"
+                        class="ea-task-table"
+                    >
                         <label
                             v-for="task in visibleTasks"
                             :key="task.id"
@@ -619,7 +624,7 @@ function toggleShortlist(vendor) {
                                 >{{ task.done ? 'Completed' : task.due }}</span
                             ></label
                         >
-                    </div>
+                    </TransitionGroup>
                     <div v-if="!visibleTasks.length" class="ea-empty">
                         <AtelierIcon name="tasks" />
                         <h2>

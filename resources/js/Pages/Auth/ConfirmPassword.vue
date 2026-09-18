@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { nextTick } from 'vue';
 
 const form = useForm({
     password: '',
@@ -13,6 +14,10 @@ const form = useForm({
 const submit = () => {
     form.post(route('password.confirm'), {
         onFinish: () => form.reset(),
+        onError: async () => {
+            await nextTick();
+            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+        },
     });
 };
 </script>
@@ -21,13 +26,13 @@ const submit = () => {
     <GuestLayout>
         <Head title="Confirm Password" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            This is a secure area of the application. Please confirm your
-            password before continuing.
-        </div>
+        <header class="ea-auth-card-header">
+            <h2>One quiet check.</h2>
+            <p>This area holds private event details. Confirm your password to continue.</p>
+        </header>
 
-        <form @submit.prevent="submit">
-            <div>
+        <form class="ea-auth-form" @submit.prevent="submit">
+            <div class="ea-auth-field">
                 <InputLabel for="password" value="Password" />
                 <TextInput
                     id="password"
@@ -37,17 +42,18 @@ const submit = () => {
                     required
                     autocomplete="current-password"
                     autofocus
+                    :aria-invalid="Boolean(form.errors.password)"
+                    :aria-describedby="form.errors.password ? 'confirm-password-error' : undefined"
                 />
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError id="confirm-password-error" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4 flex justify-end">
+            <div class="ea-auth-actions">
                 <PrimaryButton
-                    class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Confirm
+                    {{ form.processing ? 'Checking…' : 'Confirm password' }}
                 </PrimaryButton>
             </div>
         </form>

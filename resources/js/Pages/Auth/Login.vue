@@ -6,6 +6,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { nextTick } from 'vue';
 
 defineProps({
     canResetPassword: {
@@ -25,6 +26,10 @@ const form = useForm({
 const submit = () => {
     form.post(route('login'), {
         onFinish: () => form.reset('password'),
+        onError: async () => {
+            await nextTick();
+            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+        },
     });
 };
 </script>
@@ -33,68 +38,78 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <header class="ea-auth-card-header">
+            <h2>Welcome back.</h2>
+            <p>Return to the plans and people waiting for you.</p>
+        </header>
+
+        <div v-if="status" class="ea-auth-status" role="status">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
+        <form class="ea-auth-form" @submit.prevent="submit">
+            <div class="ea-auth-field">
                 <InputLabel for="email" value="Email" />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.email"
                     required
                     autofocus
                     autocomplete="username"
+                    :aria-invalid="Boolean(form.errors.email)"
+                    :aria-describedby="form.errors.email ? 'login-email-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError id="login-email-error" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
+            <div class="ea-auth-field">
                 <InputLabel for="password" value="Password" />
 
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.password"
                     required
                     autocomplete="current-password"
+                    :aria-invalid="Boolean(form.errors.password)"
+                    :aria-describedby="form.errors.password ? 'login-password-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError id="login-password-error" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4 block">
-                <label class="flex items-center">
+            <div class="ea-auth-options">
+                <label class="ea-auth-check">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
+                    <span>Remember me</span>
                 </label>
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="ea-auth-link"
                 >
                     Forgot your password?
                 </Link>
+            </div>
 
+            <div class="ea-auth-actions">
                 <PrimaryButton
-                    class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Log in
+                    <span>{{ form.processing ? 'Opening your atelier…' : 'Log in' }}</span>
                 </PrimaryButton>
             </div>
         </form>
+
+        <p class="ea-auth-alternate">
+            New to Event Atelier?
+            <Link :href="route('register')">Create your free account</Link>
+        </p>
     </GuestLayout>
 </template>

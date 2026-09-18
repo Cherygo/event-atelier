@@ -5,6 +5,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { nextTick } from 'vue';
 
 const props = defineProps({
     email: {
@@ -27,6 +28,10 @@ const form = useForm({
 const submit = () => {
     form.post(route('password.store'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
+        onError: async () => {
+            await nextTick();
+            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+        },
     });
 };
 </script>
@@ -35,39 +40,48 @@ const submit = () => {
     <GuestLayout>
         <Head title="Reset Password" />
 
-        <form @submit.prevent="submit">
-            <div>
+        <header class="ea-auth-card-header">
+            <h2>Choose a new key.</h2>
+            <p>Set a new password, then return to your planning room.</p>
+        </header>
+
+        <form class="ea-auth-form" @submit.prevent="submit">
+            <div class="ea-auth-field">
                 <InputLabel for="email" value="Email" />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.email"
                     required
                     autofocus
                     autocomplete="username"
+                    :aria-invalid="Boolean(form.errors.email)"
+                    :aria-describedby="form.errors.email ? 'reset-email-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError id="reset-email-error" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
+            <div class="ea-auth-field">
                 <InputLabel for="password" value="Password" />
 
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.password"
                     required
                     autocomplete="new-password"
+                    :aria-invalid="Boolean(form.errors.password)"
+                    :aria-describedby="form.errors.password ? 'reset-password-error' : undefined"
                 />
 
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError id="reset-password-error" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
+            <div class="ea-auth-field">
                 <InputLabel
                     for="password_confirmation"
                     value="Confirm Password"
@@ -76,24 +90,26 @@ const submit = () => {
                 <TextInput
                     id="password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="block w-full"
                     v-model="form.password_confirmation"
                     required
                     autocomplete="new-password"
+                    :aria-invalid="Boolean(form.errors.password_confirmation)"
+                    :aria-describedby="form.errors.password_confirmation ? 'reset-password-confirmation-error' : undefined"
                 />
 
                 <InputError
-                    class="mt-2"
+                    id="reset-password-confirmation-error"
                     :message="form.errors.password_confirmation"
                 />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
+            <div class="ea-auth-actions">
                 <PrimaryButton
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Reset Password
+                    {{ form.processing ? 'Saving password…' : 'Reset password' }}
                 </PrimaryButton>
             </div>
         </form>
