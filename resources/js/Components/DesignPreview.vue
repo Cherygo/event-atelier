@@ -245,7 +245,7 @@ function toggleShortlist(vendor) {
             <div class="ea-preview-notice" role="note" aria-label="Demo workspace notice">
                 <span
                     ><span class="ea-status-dot"></span><span><strong>Demo mode</strong> — changes disappear when you leave or reload.</span></span
-                ><Link :href="route('register')"
+                ><Link :href="route(page.props.auth.user ? 'events.create' : 'register')"
                     >Create your own <AtelierIcon name="diagonal"
                 /></Link>
             </div>

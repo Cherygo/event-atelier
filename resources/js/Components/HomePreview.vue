@@ -1,11 +1,14 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import AtelierBrand from './AtelierBrand.vue';
 import AtelierIcon from './AtelierIcon.vue';
 import PlanningIllustration from './PlanningIllustration.vue';
 import { demoEvents } from '../atelierDemo';
 
+const page = usePage();
+const signedIn = computed(() => Boolean(page.props.auth.user));
+const planningUrl = computed(() => route(signedIn.value ? 'events.create' : 'register'));
 const menuOpen = ref(false);
 const selectedOccasion = ref('wedding');
 const event = computed(() =>
@@ -149,8 +152,8 @@ onBeforeUnmount(() => sectionObserver?.disconnect());
                 >
             </nav>
             <div class="ea-account-links">
-                <Link :href="route('login')" class="ea-text-link">Log in</Link
-                ><Link :href="route('register')" class="ea-button"
+                <Link :href="route(signedIn ? 'events.index' : 'login')" class="ea-text-link">{{ signedIn ? 'My events' : 'Log in' }}</Link
+                ><Link :href="planningUrl" class="ea-button"
                     >Start planning <AtelierIcon name="diagonal"
                 /></Link>
             </div>
@@ -169,7 +172,7 @@ onBeforeUnmount(() => sectionObserver?.disconnect());
                         something entirely your own.
                     </p>
                     <div class="ea-hero-actions">
-                        <Link :href="route('register')" class="ea-button"
+                        <Link :href="planningUrl" class="ea-button"
                             >Start your event <AtelierIcon name="arrow" /></Link
                         ><Link href="/?view=workspace" class="ea-text-link"
                             >Explore a sample plan <AtelierIcon name="diagonal"
@@ -376,9 +379,9 @@ onBeforeUnmount(() => sectionObserver?.disconnect());
                 <AtelierIcon name="leaf" />
                 <h2>Something wonderful<br /><em>starts with a plan.</em></h2>
                 <Link
-                    :href="route('register')"
+                    :href="planningUrl"
                     class="ea-button ea-button-light"
-                    >Create your free account <AtelierIcon name="arrow"
+                    >{{ signedIn ? 'Start a new event' : 'Create your free account' }} <AtelierIcon name="arrow"
                 /></Link>
                 <p>Free for everyone. Made for your kind of gathering.</p>
             </section>

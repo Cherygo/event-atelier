@@ -4,6 +4,8 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -50,5 +52,31 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/');
+    }
+
+    public function test_login_session_survives_returning_home_and_reopening_events(): void
+    {
+        $user = User::factory()->create();
+
+        $this->post('/login', ['email' => $user->email, 'password' => 'password'])
+            ->assertSessionHasNoErrors();
+
+        Auth::forgetGuards();
+
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->component('Welcome')
+            ->where('auth.user.id', $user->id));
+        $this->get('/events')->assertOk();
+        $this->get('/login')->assertRedirect(route('dashboard'));
+        $this->get('/register')->assertRedirect(route('dashboard'));
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_guests_have_no_shared_account_and_cannot_open_events(): void
+    {
+        $this->get('/')->assertInertia(fn (Assert $page) => $page
+            ->component('Welcome')
+            ->where('auth.user', null));
+        $this->get('/events')->assertRedirect(route('login'));
     }
 }
