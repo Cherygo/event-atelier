@@ -180,7 +180,7 @@ Preserve the information order as columns collapse. The homepage sample, workspa
 
 The implemented system is flat: tonal fields, thin borders, photography, and whitespace supply depth. It defines no decorative box-shadow vocabulary. Focus uses an offset warm outline (3px solid #987249, offset 4px), making interaction visible without adding surface elevation.
 
-Buttons change background over (0.18s ease-out). The homepage occasion transition uses opacity and a small blur over (0.18s cubic-bezier(0.16, 1, 0.3, 1)); it marks a content change rather than continuous animation. Reduced-motion preferences remove these transitions.
+Buttons change background and settle by one pixel over the shared exponential ease (`cubic-bezier(0.16, 1, 0.3, 1)`). In-page navigation scrolls smoothly, mobile navigation reveals progressively, and capability descriptions expand within the document flow. The homepage occasion transition uses opacity and a small blur over (0.18s) with the same ease. Reduced-motion preferences remove transitions and use immediate scrolling.
 
 ## Shapes
 
@@ -214,7 +214,9 @@ Inputs use bright paper, ink text, a muted green border (#aab49d), and the contr
 
 ### Navigation
 
-The forest sidebar uses muted light text for inactive items, a deeper green hover, and a pale green active row with dark text. Active navigation exposes the current page. The phone disclosure preserves the same destinations and state rather than substituting a separate navigation model.
+The public header stays available while scrolling and marks the section currently in view with a restrained underline. Its links follow the page's reading order and scroll to their destination. The phone disclosure opens within the same header and preserves the same destinations.
+
+The forest workspace sidebar uses muted light text for inactive items, a deeper green hover, and a pale green active row with dark text. Active navigation exposes the current page. The phone disclosure preserves the same destinations and state rather than substituting a separate navigation model.
 
 ### Occasion and task patterns
 
@@ -238,4 +240,3 @@ Native checkboxes drive task rows; completed tasks gain a strike-through and mut
 - Don't use color alone to communicate selection, completion, or an error.
 - Don't treat the sample interface as evidence of persisted backend features.
 - Don't assume the scoped Atelier tokens apply to the existing authentication pages.
-

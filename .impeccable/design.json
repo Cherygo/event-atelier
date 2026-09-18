@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-18T13:57:45.976Z",
+  "generatedAt": "2026-09-18T14:15:01Z",
   "title": "Design System: Event Atelier",
   "extensions": {
     "colorMeta": {
@@ -207,13 +207,23 @@
     "motion": [
       {
         "name": "button-hover",
-        "value": "background 0.18s ease-out",
-        "purpose": "Background transition for action buttons."
+        "value": "background 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Background and one-pixel settling transition for action buttons."
       },
       {
         "name": "occasion-change",
         "value": "opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), filter 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
         "purpose": "Homepage sample transition; opacity 0.65 and blur 2px at its boundary. Removed under reduced motion."
+      },
+      {
+        "name": "navigation-scroll",
+        "value": "smooth, or auto under prefers-reduced-motion",
+        "purpose": "In-page homepage navigation keeps spatial context between sections."
+      },
+      {
+        "name": "progressive-disclosure",
+        "value": "0.38s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Mobile navigation and capability descriptions reveal within document flow."
       }
     ],
     "breakpoints": [
@@ -246,7 +256,7 @@
       "refersTo": "button-primary",
       "description": "The principal event or planning action.",
       "html": "<button type=\"button\" class=\"ds-button\">Start your event <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button>",
-      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-button{background:#243f31;color:#fffdf7}.ds-button:hover{background:#355440}"
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .22s cubic-bezier(0.16,1,0.3,1),transform .22s cubic-bezier(0.16,1,0.3,1)}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-button{background:#243f31;color:#fffdf7}.ds-button:hover{background:#355440}"
     },
     {
       "name": "Outline button",
@@ -254,7 +264,7 @@
       "refersTo": "button-outline",
       "description": "A secondary workspace action.",
       "html": "<button type=\"button\" class=\"ds-button\">Preview shared page <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button>",
-      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-button{background:transparent;color:#263d30;border-color:#a8b19c}.ds-button:hover{background:#e9eddf}"
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .22s cubic-bezier(0.16,1,0.3,1),transform .22s cubic-bezier(0.16,1,0.3,1)}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-button{background:transparent;color:#263d30;border-color:#a8b19c}.ds-button:hover{background:#e9eddf}"
     },
     {
       "name": "Light button",
@@ -262,7 +272,7 @@
       "refersTo": "button-light",
       "description": "The warm action variant on forest surfaces.",
       "html": "<div class=\"ds-dark\"><button type=\"button\" class=\"ds-button\">Start planning <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button></div>",
-      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-dark{padding:24px;background:#243f31}.ds-button{background:#e1cfaa;color:#243f31}.ds-button:hover{background:#ecdcba}"
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .22s cubic-bezier(0.16,1,0.3,1),transform .22s cubic-bezier(0.16,1,0.3,1)}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-dark{padding:24px;background:#243f31}.ds-button{background:#e1cfaa;color:#243f31}.ds-button:hover{background:#ecdcba}"
     },
     {
       "name": "Text link",
@@ -348,4 +358,3 @@
     ]
   }
 }
-

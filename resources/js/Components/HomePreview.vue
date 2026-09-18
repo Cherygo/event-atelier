@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import AtelierBrand from './AtelierBrand.vue';
 import AtelierIcon from './AtelierIcon.vue';
@@ -12,6 +12,8 @@ const event = computed(() =>
     demoEvents.find((item) => item.id === selectedOccasion.value),
 );
 const openFeature = ref('tasks');
+const activeSection = ref('');
+let sectionObserver;
 const features = [
     {
         id: 'tasks',
@@ -42,6 +44,59 @@ const features = [
             'Invite your planning circle or prepare a read-only page. Choose which details to share, with the budget hidden by default.',
     },
 ];
+
+async function scrollToSection(clickEvent, sectionId) {
+    clickEvent.preventDefault();
+    activeSection.value = sectionId;
+    menuOpen.value = false;
+    await nextTick();
+
+    const target = document.getElementById(sectionId);
+
+    if (!target) {
+        return;
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+    ).matches;
+
+    target.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'start',
+    });
+    window.history.replaceState(null, '', `#${sectionId}`);
+}
+
+onMounted(() => {
+    sectionObserver = new IntersectionObserver(
+        (entries) => {
+            const visibleSection = entries
+                .filter((entry) => entry.isIntersecting)
+                .sort(
+                    (first, second) =>
+                        second.intersectionRatio - first.intersectionRatio,
+                )[0];
+
+            if (visibleSection) {
+                activeSection.value = visibleSection.target.id;
+            }
+        },
+        { rootMargin: '-18% 0px -62% 0px', threshold: [0, 0.15, 0.35] },
+    );
+
+    ['home-intro', 'planning-room', 'possibilities', 'audiences'].forEach(
+        (sectionId) => {
+            const section = document.getElementById(sectionId);
+
+            if (section) {
+                sectionObserver.observe(section);
+            }
+        },
+    );
+});
+
+onBeforeUnmount(() => sectionObserver?.disconnect());
 </script>
 
 <template>
@@ -64,14 +119,33 @@ const features = [
                 :class="{ 'is-open': menuOpen }"
                 aria-label="Main navigation"
             >
-                <a href="#possibilities" @click="menuOpen = false"
-                    >The possibilities</a
+                <a
+                    href="#planning-room"
+                    :aria-current="
+                        activeSection === 'planning-room'
+                            ? 'location'
+                            : undefined
+                    "
+                    @click="scrollToSection($event, 'planning-room')"
+                    >Inside the atelier</a
                 >
-                <a href="#planning-room" @click="menuOpen = false"
-                    >Take a look inside</a
+                <a
+                    href="#possibilities"
+                    :aria-current="
+                        activeSection === 'possibilities'
+                            ? 'location'
+                            : undefined
+                    "
+                    @click="scrollToSection($event, 'possibilities')"
+                    >What it brings together</a
                 >
-                <a href="#how-it-works" @click="menuOpen = false"
-                    >How it works</a
+                <a
+                    href="#audiences"
+                    :aria-current="
+                        activeSection === 'audiences' ? 'location' : undefined
+                    "
+                    @click="scrollToSection($event, 'audiences')"
+                    >Who it’s for</a
                 >
             </nav>
             <div class="ea-account-links">
@@ -83,7 +157,7 @@ const features = [
         </header>
 
         <main id="main-content">
-            <section class="ea-home-hero">
+            <section id="home-intro" class="ea-home-hero">
                 <div class="ea-hero-copy">
                     <h1>Good things<br />come <em>together.</em></h1>
                     <p class="ea-hero-intro">
@@ -139,6 +213,7 @@ const features = [
                         href="#planning-room"
                         class="ea-round-link"
                         aria-label="Explore the planning room"
+                        @click="scrollToSection($event, 'planning-room')"
                         ><AtelierIcon name="arrow"
                     /></a>
                 </div>
@@ -237,96 +312,64 @@ const features = [
                                     >{{ feature.title
                                     }}<small>{{ feature.label }}</small></span
                                 ><AtelierIcon
-                                    :name="
-                                        openFeature === feature.id
-                                            ? 'close'
-                                            : 'plus'
-                                    "
+                                    name="plus"
+                                    class="ea-feature-toggle-icon"
                                 />
                             </button>
                         </h3>
                         <div
-                            v-show="openFeature === feature.id"
                             :id="'feature-' + feature.id"
+                            class="ea-feature-panel"
+                            :aria-hidden="openFeature !== feature.id"
+                            :inert="openFeature !== feature.id"
                         >
-                            <p>{{ feature.description }}</p>
-                            <Link
-                                :href="'/?view=workspace&section=' + feature.id"
-                                class="ea-text-link"
-                                >Explore {{ feature.label.toLowerCase() }}
-                                <AtelierIcon name="arrow"
-                            /></Link>
+                            <div class="ea-feature-panel-clip">
+                                <div class="ea-feature-panel-inner">
+                                    <p>{{ feature.description }}</p>
+                                </div>
+                            </div>
                         </div>
                     </section>
+                    <Link
+                        href="/?view=workspace"
+                        class="ea-text-link ea-feature-cta"
+                        >Explore the full sample workspace
+                        <AtelierIcon name="arrow"
+                    /></Link>
                 </div>
             </section>
 
-            <section class="ea-home-audiences">
+            <section id="audiences" class="ea-home-audiences">
                 <div>
-                    <h2>
-                        Your day.<br />Your team.<br /><em
-                            >Your kind of wonderful.</em
-                        >
-                    </h2>
+                    <h2>Made for the way<br /><em>you plan.</em></h2>
                     <p>
-                        Whether you’re planning your first gathering or your
-                        next client event, give every occasion a space of its
-                        own.
+                        One gathering, a company occasion, or a full client
+                        calendar—each event gets its own calm workspace.
                     </p>
                 </div>
                 <div class="ea-audience-notes">
                     <article>
                         <h3>For couples & hosts</h3>
                         <p>
-                            Plan together, compare your favourites, and let the
-                            details take shape around you.
+                            Plan together and compare the decisions that shape
+                            your gathering.
                         </p>
                     </article>
                     <article>
                         <h3>For company teams</h3>
                         <p>
-                            Give each task an owner, keep spending visible, and
-                            bring stakeholders into the plan.
+                            Give work an owner and keep spending visible to the
+                            right people.
                         </p>
                     </article>
                     <article>
                         <h3>For professional planners</h3>
                         <p>
-                            A dedicated workspace for each client, with the
-                            people and information that belong there.
+                            Keep each client, collaborator, and decision in its
+                            own space.
                         </p>
                     </article>
                 </div>
-            </section>
-
-            <section id="how-it-works" class="ea-home-steps ea-home-section">
-                <h2>From a first idea<br /><em>to a day to remember.</em></h2>
-                <ol>
-                    <li>
-                        <span>1</span>
-                        <h3>Give it a home.</h3>
-                        <p>
-                            Create an account and name your gathering. Start
-                            with the details you know.
-                        </p>
-                    </li>
-                    <li>
-                        <span>2</span>
-                        <h3>Make it your own.</h3>
-                        <p>
-                            Gather tasks, compare vendors, and give your budget
-                            a plan.
-                        </p>
-                    </li>
-                    <li>
-                        <span>3</span>
-                        <h3>Bring your people in.</h3>
-                        <p>
-                            Invite collaborators and choose the details you want
-                            to share.
-                        </p>
-                    </li>
-                </ol>
             </section>
 
             <section class="ea-final-invitation">
