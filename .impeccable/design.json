@@ -1,0 +1,351 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-18T13:57:45.976Z",
+  "title": "Design System: Event Atelier",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Cream Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0111 89.72)",
+          "oklch(26.43% 0.0111 89.72)",
+          "oklch(37.86% 0.0111 89.72)",
+          "oklch(49.29% 0.0111 89.72)",
+          "oklch(60.71% 0.0111 89.72)",
+          "oklch(72.14% 0.0111 89.72)",
+          "oklch(83.57% 0.0111 89.72)",
+          "oklch(95.00% 0.0111 89.72)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Bright Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0082 91.48)",
+          "oklch(26.43% 0.0082 91.48)",
+          "oklch(37.86% 0.0082 91.48)",
+          "oklch(49.29% 0.0082 91.48)",
+          "oklch(60.71% 0.0082 91.48)",
+          "oklch(72.14% 0.0082 91.48)",
+          "oklch(83.57% 0.0082 91.48)",
+          "oklch(95.00% 0.0082 91.48)"
+        ]
+      },
+      "forest": {
+        "role": "primary",
+        "displayName": "Deep Forest",
+        "tonalRamp": [
+          "oklch(15.00% 0.0415 160.51)",
+          "oklch(26.43% 0.0415 160.51)",
+          "oklch(37.86% 0.0415 160.51)",
+          "oklch(49.29% 0.0415 160.51)",
+          "oklch(60.71% 0.0415 160.51)",
+          "oklch(72.14% 0.0415 160.51)",
+          "oklch(83.57% 0.0415 160.51)",
+          "oklch(95.00% 0.0415 160.51)"
+        ]
+      },
+      "forest-hover": {
+        "role": "primary",
+        "displayName": "Forest Hover",
+        "tonalRamp": [
+          "oklch(15.00% 0.0498 155.30)",
+          "oklch(26.43% 0.0498 155.30)",
+          "oklch(37.86% 0.0498 155.30)",
+          "oklch(49.29% 0.0498 155.30)",
+          "oklch(60.71% 0.0498 155.30)",
+          "oklch(72.14% 0.0498 155.30)",
+          "oklch(83.57% 0.0498 155.30)",
+          "oklch(95.00% 0.0498 155.30)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Forest Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0370 158.84)",
+          "oklch(26.43% 0.0370 158.84)",
+          "oklch(37.86% 0.0370 158.84)",
+          "oklch(49.29% 0.0370 158.84)",
+          "oklch(60.71% 0.0370 158.84)",
+          "oklch(72.14% 0.0370 158.84)",
+          "oklch(83.57% 0.0370 158.84)",
+          "oklch(95.00% 0.0370 158.84)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Olive",
+        "tonalRamp": [
+          "oklch(15.00% 0.0311 135.13)",
+          "oklch(26.43% 0.0311 135.13)",
+          "oklch(37.86% 0.0311 135.13)",
+          "oklch(49.29% 0.0311 135.13)",
+          "oklch(60.71% 0.0311 135.13)",
+          "oklch(72.14% 0.0311 135.13)",
+          "oklch(83.57% 0.0311 135.13)",
+          "oklch(95.00% 0.0311 135.13)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Paper Rule",
+        "tonalRamp": [
+          "oklch(15.00% 0.0220 118.27)",
+          "oklch(26.43% 0.0220 118.27)",
+          "oklch(37.86% 0.0220 118.27)",
+          "oklch(49.29% 0.0220 118.27)",
+          "oklch(60.71% 0.0220 118.27)",
+          "oklch(72.14% 0.0220 118.27)",
+          "oklch(83.57% 0.0220 118.27)",
+          "oklch(95.00% 0.0220 118.27)"
+        ]
+      },
+      "sage": {
+        "role": "secondary",
+        "displayName": "Pale Sage",
+        "tonalRamp": [
+          "oklch(15.00% 0.0191 119.76)",
+          "oklch(26.43% 0.0191 119.76)",
+          "oklch(37.86% 0.0191 119.76)",
+          "oklch(49.29% 0.0191 119.76)",
+          "oklch(60.71% 0.0191 119.76)",
+          "oklch(72.14% 0.0191 119.76)",
+          "oklch(83.57% 0.0191 119.76)",
+          "oklch(95.00% 0.0191 119.76)"
+        ]
+      },
+      "rose": {
+        "role": "secondary",
+        "displayName": "Dusty Rose",
+        "tonalRamp": [
+          "oklch(15.00% 0.0224 49.91)",
+          "oklch(26.43% 0.0224 49.91)",
+          "oklch(37.86% 0.0224 49.91)",
+          "oklch(49.29% 0.0224 49.91)",
+          "oklch(60.71% 0.0224 49.91)",
+          "oklch(72.14% 0.0224 49.91)",
+          "oklch(83.57% 0.0224 49.91)",
+          "oklch(95.00% 0.0224 49.91)"
+        ]
+      },
+      "rose-ink": {
+        "role": "secondary",
+        "displayName": "Rose Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0653 34.13)",
+          "oklch(26.43% 0.0653 34.13)",
+          "oklch(37.86% 0.0653 34.13)",
+          "oklch(49.29% 0.0653 34.13)",
+          "oklch(60.71% 0.0653 34.13)",
+          "oklch(72.14% 0.0653 34.13)",
+          "oklch(83.57% 0.0653 34.13)",
+          "oklch(95.00% 0.0653 34.13)"
+        ]
+      },
+      "gold": {
+        "role": "secondary",
+        "displayName": "Warm Gold",
+        "tonalRamp": [
+          "oklch(15.00% 0.0530 85.08)",
+          "oklch(26.43% 0.0530 85.08)",
+          "oklch(37.86% 0.0530 85.08)",
+          "oklch(49.29% 0.0530 85.08)",
+          "oklch(60.71% 0.0530 85.08)",
+          "oklch(72.14% 0.0530 85.08)",
+          "oklch(83.57% 0.0530 85.08)",
+          "oklch(95.00% 0.0530 85.08)"
+        ]
+      },
+      "light-ink": {
+        "role": "neutral",
+        "displayName": "Light Sage Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0351 128.93)",
+          "oklch(26.43% 0.0351 128.93)",
+          "oklch(37.86% 0.0351 128.93)",
+          "oklch(49.29% 0.0351 128.93)",
+          "oklch(60.71% 0.0351 128.93)",
+          "oklch(72.14% 0.0351 128.93)",
+          "oklch(83.57% 0.0351 128.93)",
+          "oklch(95.00% 0.0351 128.93)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Editorial hero",
+        "purpose": "Homepage hero; responsive overrides are documented in Layout and Typography."
+      },
+      "headline": {
+        "displayName": "Section headline",
+        "purpose": "Public-page section headings."
+      },
+      "workspace-title": {
+        "displayName": "Workspace title",
+        "purpose": "Current planning section."
+      },
+      "panel-title": {
+        "displayName": "Planning panel",
+        "purpose": "Task and working-section titles."
+      },
+      "body": {
+        "displayName": "Working text",
+        "purpose": "Readable Source Sans 3 text."
+      },
+      "button": {
+        "displayName": "Action label",
+        "purpose": "Semibold primary and secondary controls."
+      },
+      "tag": {
+        "displayName": "Status label",
+        "purpose": "Compact textual state."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-hover",
+        "value": "background 0.18s ease-out",
+        "purpose": "Background transition for action buttons."
+      },
+      {
+        "name": "occasion-change",
+        "value": "opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1), filter 0.18s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Homepage sample transition; opacity 0.65 and blur 2px at its boundary. Removed under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-min",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1150px"
+      },
+      {
+        "name": "disclosure-navigation-max",
+        "value": "900px"
+      },
+      {
+        "name": "phone-max",
+        "value": "640px"
+      },
+      {
+        "name": "narrow-phone-max",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The principal event or planning action.",
+      "html": "<button type=\"button\" class=\"ds-button\">Start your event <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-button{background:#243f31;color:#fffdf7}.ds-button:hover{background:#355440}"
+    },
+    {
+      "name": "Outline button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "A secondary workspace action.",
+      "html": "<button type=\"button\" class=\"ds-button\">Preview shared page <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-button{background:transparent;color:#263d30;border-color:#a8b19c}.ds-button:hover{background:#e9eddf}"
+    },
+    {
+      "name": "Light button",
+      "kind": "button",
+      "refersTo": "button-light",
+      "description": "The warm action variant on forest surfaces.",
+      "html": "<div class=\"ds-dark\"><button type=\"button\" class=\"ds-button\">Start planning <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button></div>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:20px;min-height:48px;padding:12px 20px;border:1px solid transparent;border-radius:4px;font:600 15px/1.35 'Atelier Sans',system-ui,sans-serif;cursor:pointer;transition:background .18s ease-out}.ds-button:disabled{opacity:.5;cursor:not-allowed}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}@media(prefers-reduced-motion:reduce){.ds-button{transition:none}}.ds-dark{padding:24px;background:#243f31}.ds-button{background:#e1cfaa;color:#243f31}.ds-button:hover{background:#ecdcba}"
+    },
+    {
+      "name": "Text link",
+      "kind": "button",
+      "refersTo": "text-link",
+      "description": "An understated navigation action with an outline arrow.",
+      "html": "<a class=\"ds-link\" href=\"#sample\">Open the checklist <svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></a>",
+      "css": ".ds-link{display:inline-flex;align-items:center;gap:12px;min-height:44px;color:#263d30;font:600 15px/1.5 'Atelier Sans',system-ui,sans-serif;text-decoration:none;text-underline-offset:5px}.ds-link:hover{text-decoration:underline}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}"
+    },
+    {
+      "name": "Task field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Visible-label inline form input; set aria-invalid for the implemented error border.",
+      "html": "<label class=\"ds-label\">Task name<input class=\"ds-input\" placeholder=\"What needs to happen?\" /></label>",
+      "css": ".ds-label{display:flex;flex-direction:column;gap:7px;color:#263d30;font:400 14px/1.5 'Atelier Sans',system-ui,sans-serif}.ds-input{background:#fffdf7;color:#263d30;border:1px solid #aab49d;border-radius:4px;padding:10px 12px;min-height:44px;font:400 15px 'Atelier Sans',system-ui,sans-serif}.ds-input::placeholder{color:#687360;opacity:1}.ds-input[aria-invalid='true']{border-color:#a55346}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}"
+    },
+    {
+      "name": "Workspace navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Forest navigation with explicit current-page state.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Sample workspace\"><button class=\"ds-nav-button\" type=\"button\" aria-current=\"page\"><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z\"/></svg>Overview</button><button class=\"ds-nav-button\" type=\"button\"><svg aria-hidden=\"true\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 6 2 2 3-4M11 6h10M3 13h4M11 13h10M3 20h4M11 20h10\"/></svg>Tasks</button></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:7px;background:#243f31;padding:20px}.ds-nav-button{display:flex;align-items:center;gap:13px;border:0;background:transparent;padding:13px 12px;text-align:left;color:#d2ddc7;border-radius:5px;font:400 15px/1.5 'Atelier Sans',system-ui,sans-serif;cursor:pointer}.ds-nav-button:hover{background:#39533d}.ds-nav-button[aria-current='page']{background:#dbe4ce;color:#263f2e}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}"
+    },
+    {
+      "name": "Status tags",
+      "kind": "chip",
+      "refersTo": "tag-rose",
+      "description": "Text-labelled neutral, green, and rose status treatments.",
+      "html": "<div class=\"ds-tags\"><span class=\"ds-tag\">Sample plan</span><span class=\"ds-tag ds-green\">Booked</span><span class=\"ds-tag ds-rose\">Due soon</span></div>",
+      "css": ".ds-tags{display:flex;flex-wrap:wrap;gap:10px}.ds-tag{display:inline-flex;align-items:center;justify-content:center;padding:5px 10px;border-radius:4px;background:#eceee4;color:#53614d;font:400 12px/1.4 'Atelier Sans',system-ui,sans-serif;white-space:nowrap}.ds-green{background:#e2ebdb;color:#3b593a}.ds-rose{background:#efded5;color:#7c4e43}"
+    },
+    {
+      "name": "Budget panel",
+      "kind": "card",
+      "refersTo": "budget-panel",
+      "description": "A quiet tonal container for illustrative financial comparisons.",
+      "html": "<section class=\"ds-budget\"><h2 class=\"ds-budget-title\">Budget at a glance</h2><dl class=\"ds-budget-list\"><div class=\"ds-budget-row\"><dt>Planned budget</dt><dd>€30,000</dd></div><div class=\"ds-budget-row\"><dt>Committed</dt><dd>€18,500</dd></div></dl></section>",
+      "css": ".ds-budget{background:#eef0e5;color:#263d30;padding:23px 25px;border-radius:8px;font-family:'Atelier Sans',system-ui,sans-serif;}.ds-budget-title{font:400 26px/1.04 'Atelier Display',Georgia,serif;letter-spacing:-.025em;margin:0}.ds-budget-list{margin:16px 0 0}.ds-budget-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:14px}.ds-budget-row dt{color:#65715f}.ds-budget-row dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Task row",
+      "kind": "custom",
+      "description": "Native checkbox and ruled row; the example's checked state visually follows its control.",
+      "html": "<label class=\"ds-task\"><input type=\"checkbox\" /><span class=\"ds-task-copy\">Confirm the venue<small class=\"ds-task-meta\">Venue · Due this week</small></span></label>",
+      "css": ".ds-task{display:flex;align-items:center;gap:13px;padding:17px 0;border-bottom:1px solid #d5d9c9;color:#263d30;cursor:pointer;font-family:'Atelier Sans',system-ui,sans-serif;}.ds-task input{appearance:auto;accent-color:#243f31;height:19px;width:19px;border-radius:3px;flex-shrink:0;cursor:pointer}.ds-task-copy{font-size:15px;line-height:1.4;flex:1;min-width:0;overflow-wrap:anywhere}.ds-task-meta{display:block;font-size:12px;color:#65715f;margin-top:5px}.ds-task input:checked + .ds-task-copy{text-decoration:line-through;color:#65715f}.ds-button:focus-visible,.ds-link:focus-visible,.ds-input:focus-visible,.ds-nav-button:focus-visible,.ds-task input:focus-visible{outline:3px solid #987249;outline-offset:4px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Editorial–Estate",
+    "overview": "Calm cream paper, architectural arches, muted occasion photography, and forest-green fields give Event Atelier a formal editorial character. Expressive serif names and headlines establish identity; readable sans-serif controls keep the planning work practical. The same world accommodates weddings, company gatherings, and private occasions.\n\nThis records the implemented homepage and interactive sample workspace, grounded in `resources/css/atelier.css` and the Atelier Vue components. The samples demonstrate a visual and interaction direction; they do not establish persisted planning, production sharing, or completed backend workflows. Existing Breeze authentication pages still use their scaffold styling and are outside the applied system.",
+    "keyCharacteristics": [
+      "Cream paper and deep forest surfaces with restrained rose and gold accents.",
+      "Editorial serif headings paired with readable sans-serif working text.",
+      "Architectural arches at identity moments; compact, ruled planning surfaces.",
+      "Visible state, clear focus, and layouts adapted to laptop and phone use."
+    ],
+    "rules": [
+      {
+        "name": "The Scoped Palette Rule",
+        "body": "The CSS custom properties live on the homepage and workspace wrappers, not on `:root`. New children need that scope or explicit token values; do not assume the authentication scaffold inherits this palette.",
+        "section": "colors"
+      },
+      {
+        "name": "The Working Type Rule",
+        "body": "Keep actions and dense planning records in the sans face; use the serif to establish identity and section hierarchy.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do use the same cream-and-forest identity across public and planning surfaces.",
+      "Do give task text, labels, figures, and action states clear sans-serif treatment.",
+      "Do preserve visible keyboard focus, meaningful state labels, and reduced-motion behavior.",
+      "Do keep occasion names prominent and supporting metadata subordinate.",
+      "Do identify illustrative plans and temporary interactions as samples."
+    ],
+    "donts": [
+      "Don't turn every working row into an elevated card.",
+      "Don't use color alone to communicate selection, completion, or an error.",
+      "Don't treat the sample interface as evidence of persisted backend features.",
+      "Don't assume the scoped Atelier tokens apply to the existing authentication pages."
+    ]
+  }
+}
+

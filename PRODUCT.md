@@ -51,11 +51,10 @@ Organization-wide administration, enterprise billing, vendor marketplaces or por
 
 The repository contains a Laravel authentication scaffold and interactive design previews. Workspace and homepage previews use sample data. Their planning interactions do not establish completed backend features or persistence.
 
-The user selected a combination of workspace directions 1 (Editorial) and 2 (Estate). The final combined workspace implementation is still outstanding. Five homepage directions exist, but the user has not selected a final homepage.
+The user selected one cohesive homepage and workspace combining directions 1 (Editorial) and 2 (Estate), with distinctive design balanced against practical usability. That combined interactive sample now replaces the alternative previews. Wedding and corporate examples have separate temporary task, vendor, and sharing state; planning persistence and production workspace workflows remain outstanding.
 
 ### Open decisions
 
-- Final homepage composition and the detailed Editorial–Estate combination.
 - Future enterprise scope and commercial model.
 - Production hosting, operational setup, and launch timing.
 - Any specific accessibility conformance target beyond the confirmed laptop/mobile requirement.
@@ -73,8 +72,10 @@ These are user-established commitments, not a new design specification. Detailed
 ## Evidence on Hand
 
 - Agreed planning scope and contributor constraints: `AGENTS.md`.
-- Workspace design previews: `resources/js/Components/DesignPreview.vue` and `resources/css/design-preview.css`.
-- Homepage design previews: `resources/js/Components/HomePreview.vue` and `resources/css/home-preview.css`.
+- Cohesive workspace sample: `resources/js/Components/DesignPreview.vue`.
+- Cohesive homepage: `resources/js/Components/HomePreview.vue`.
+- Shared visual system: `resources/css/atelier.css`, `resources/js/Components/AtelierBrand.vue`, and `resources/js/Components/AtelierIcon.vue`.
+- Illustrative event data: `resources/js/atelierDemo.js`.
 - Sample workspace illustration: `resources/js/Components/PlanningIllustration.vue`.
 - Preview photography: `public/images/preview-estate.jpg`, `public/images/preview-garden.jpg`, and `public/images/preview-table.jpg`.
 - The preview names, vendors, budgets, dates, and progress figures are illustrative, not customer evidence.
