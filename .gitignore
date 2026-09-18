@@ -18,6 +18,7 @@
 /.zed
 /auth.json
 /node_modules
+/.impeccable/review/
 /public/build
 /public/fonts-manifest.dev.json
 /public/hot

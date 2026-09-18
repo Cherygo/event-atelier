@@ -1,10 +1,16 @@
 <script setup>
-import DesignPreview from "@/Components/DesignPreview.vue";
-import HomePreview from "@/Components/HomePreview.vue";
+import DesignPreview from '@/Components/DesignPreview.vue';
+import HomePreview from '@/Components/HomePreview.vue';
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import '../../css/atelier.css';
 
-const showWorkspace =
-    typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).get("view") === "workspace";
+const page = usePage();
+const showWorkspace = computed(
+    () =>
+        new URLSearchParams(page.url.split('?')[1] || '').get('view') ===
+        'workspace',
+);
 </script>
 
 <template>

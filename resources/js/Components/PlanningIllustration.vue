@@ -1,68 +1,78 @@
 <script setup>
-defineProps({ compact: Boolean });
+import { computed } from 'vue';
+import { Link } from '@inertiajs/vue3';
+import AtelierIcon from './AtelierIcon.vue';
+import { money } from '../atelierDemo';
+const props = defineProps({ event: { type: Object, required: true } });
+const committed = computed(() =>
+    props.event.expenses.reduce((total, item) => total + item.amount, 0),
+);
 </script>
 
 <template>
-    <div
-        class="planning-illustration"
-        :class="{ compact }"
-        aria-label="Sample planning workspace showing tasks, vendors, and budget"
-    >
-        <div class="illustration-bar">
-            <span class="illustration-brand">event atelier</span
-            ><span>YOUR PLANNING ROOM <i></i></span>
+    <div class="ea-plan-sample">
+        <div class="ea-sample-side">
+            <span class="ea-brand-mark" aria-hidden="true">a.</span
+            ><span>One occasion.<br /><em>All the details.</em></span
+            ><AtelierIcon name="leaf" />
         </div>
-        <div class="illustration-body">
-            <div class="illustration-heading">
+        <div class="ea-sample-content">
+            <div class="ea-sample-title">
                 <div>
-                    <span class="home-kicker">A COUNTRYSIDE WEDDING</span>
-                    <h3>Olivia & Alexander</h3>
-                    <p>24 October 2026 · The Cotswolds</p>
+                    <h3>{{ event.name }}</h3>
+                    <p>{{ event.date }} · {{ event.place }}</p>
                 </div>
-                <div class="illustration-count">
-                    <strong>37</strong><span>DAYS TO GO</span>
-                </div>
+                <span class="ea-tag">Sample plan</span>
             </div>
-            <div class="illustration-stats">
-                <div>
-                    <small>THE CHECKLIST</small><strong>24 <em>/ 36</em></strong
-                    ><span class="illustration-track"><i></i></span>
-                </div>
-                <div>
-                    <small>THE BUDGET</small><strong>£18,450</strong>
-                    <p>£6,550 left for the little extras</p>
-                </div>
-                <div>
-                    <small>YOUR TEAM</small
-                    ><span class="illustration-avatars"
-                        ><b>EL</b><b>OA</b><b>JM</b></span
+            <div class="ea-sample-columns">
+                <section>
+                    <h4>Up next</h4>
+                    <p
+                        v-for="task in event.tasks.slice(0, 3)"
+                        :key="task.id"
+                        class="ea-sample-task"
                     >
-                    <p>Better, together.</p>
-                </div>
-            </div>
-            <div class="illustration-lists">
-                <section>
-                    <h4>On the horizon <span>ALL TASKS ↗</span></h4>
-                    <p><i></i>Confirm the seasonal menu <small>Today</small></p>
-                    <p>
-                        <i></i>Review the floral proposal
-                        <small>Tomorrow</small>
+                        <span
+                            class="ea-demo-checkbox"
+                            :class="{ checked: task.done }"
+                            ><AtelierIcon v-if="task.done" name="check" /></span
+                        ><span :class="{ 'ea-strike': task.done }">{{
+                            task.title
+                        }}</span
+                        ><span class="ea-sample-due">{{
+                            task.done ? 'Done' : task.due
+                        }}</span>
                     </p>
-                    <p class="is-done">
-                        <i>✓</i>Send the invitations <small>Done</small>
-                    </p>
+                    <Link
+                        :href="
+                            '/?view=workspace&event=' +
+                            event.id +
+                            '&section=tasks'
+                        "
+                        class="ea-text-link"
+                        >Open the checklist <AtelierIcon name="arrow"
+                    /></Link>
                 </section>
-                <section>
-                    <h4>A lovely little team</h4>
-                    <div class="illustration-vendor">
-                        <b>O</b><span>The Orangery<small>Venue</small></span
-                        ><em>Booked</em>
-                    </div>
-                    <div class="illustration-vendor">
-                        <b>G</b
-                        ><span>Gather & Graze<small>Catering</small></span
-                        ><em>Shortlisted</em>
-                    </div>
+                <section class="ea-sample-budget">
+                    <h4>Room for what matters</h4>
+                    <dl>
+                        <div>
+                            <dt>Planned budget</dt>
+                            <dd>{{ money(event.budget) }}</dd>
+                        </div>
+                        <div>
+                            <dt>Committed</dt>
+                            <dd>{{ money(committed) }}</dd>
+                        </div>
+                        <div>
+                            <dt>Still available</dt>
+                            <dd>{{ money(event.budget - committed) }}</dd>
+                        </div>
+                    </dl>
+                    <p>
+                        <AtelierIcon name="check" /> All figures are
+                        illustrative.
+                    </p>
                 </section>
             </div>
         </div>
