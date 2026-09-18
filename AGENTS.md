@@ -218,3 +218,4 @@ Event Atelier is a collaborative planning workspace for weddings, corporate even
 - Group every set of files required for one cohesive behaviour into one commit. For example, an authentication update in `AuthController` and the corresponding `auth.vue` implementation must be committed together.
 - Do not mix unrelated features, refactors, formatting-only edits, or dependency upgrades in one commit.
 - Keep every commit buildable and independently reviewable.
+- Push completed commits to the configured GitHub remote before handing work back to the user, unless the user explicitly asks to keep changes local.
