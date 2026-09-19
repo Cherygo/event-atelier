@@ -152,10 +152,17 @@ onBeforeUnmount(() => sectionObserver?.disconnect());
                 >
             </nav>
             <div class="ea-account-links">
-                <Link :href="route(signedIn ? 'events.index' : 'login')" class="ea-text-link">{{ signedIn ? 'My events' : 'Log in' }}</Link
-                ><Link :href="planningUrl" class="ea-button"
-                    >Start planning <AtelierIcon name="diagonal"
-                /></Link>
+                <template v-if="signedIn">
+                    <Link :href="route('events.index')" class="ea-button ea-account-events">
+                        My events <AtelierIcon name="diagonal" />
+                    </Link>
+                </template>
+                <template v-else>
+                    <Link :href="route('login')" class="ea-text-link">Log in</Link>
+                    <Link :href="planningUrl" class="ea-button">
+                        Start planning <AtelierIcon name="diagonal" />
+                    </Link>
+                </template>
             </div>
         </header>
 

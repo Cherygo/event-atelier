@@ -20,7 +20,12 @@ const eventCountLabel = computed(() => props.events.length === 1 ? '1 event in p
                     <h1>My events</h1>
                     <p>{{ eventCountLabel }}. Start with the occasion that needs a clear plan.</p>
                 </div>
-                <Link :href="route('events.create')" class="ea-button" prefetch><span>Plan an event</span><AtelierIcon name="plus" /></Link>
+                <div class="ea-events-actions">
+                    <Link :href="route('events.create')" class="ea-button" prefetch><span>Plan an event</span><AtelierIcon name="plus" /></Link>
+                    <Link :href="route('logout')" method="post" as="button" class="ea-button ea-button-outline ea-events-logout">
+                        Log out <AtelierIcon name="diagonal" />
+                    </Link>
+                </div>
             </header>
 
             <section v-if="events.length" class="ea-event-list" aria-label="Your events">
