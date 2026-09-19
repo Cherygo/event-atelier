@@ -70,16 +70,18 @@ const navigation = [
                 </Link>
             </nav>
 
-            <div class="ea-app-account">
-                <div class="ea-app-avatar" aria-hidden="true">{{ $page.props.auth.user.name.slice(0, 1) }}</div>
-                <div>
-                    <strong>{{ $page.props.auth.user.name }}</strong>
-                    <span>{{ $page.props.auth.user.email }}</span>
-                </div>
+            <div class="ea-app-sidebar-footer">
                 <Link :href="route('logout')" method="post" as="button" class="ea-app-logout">
-                    <span class="sr-only">Log out</span>
+                    Log out
                     <AtelierIcon name="diagonal" />
                 </Link>
+                <div class="ea-app-account">
+                    <div class="ea-app-avatar" aria-hidden="true">{{ $page.props.auth.user.name.slice(0, 1) }}</div>
+                    <div>
+                        <strong>{{ $page.props.auth.user.name }}</strong>
+                        <span>{{ $page.props.auth.user.email }}</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
