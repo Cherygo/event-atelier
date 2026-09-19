@@ -1,0 +1,18 @@
+<?php
+
+namespace Database\Factories;
+
+use App\EventRole;
+use App\Models\Event;
+use App\Models\EventMember;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/** @extends Factory<EventMember> */
+class EventMemberFactory extends Factory
+{
+    public function definition(): array
+    {
+        return ['event_id' => Event::factory(), 'user_id' => User::factory(), 'role' => EventRole::Viewer];
+    }
+}
