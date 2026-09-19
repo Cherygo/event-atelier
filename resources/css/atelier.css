@@ -3030,6 +3030,9 @@
 .ea-event-detail select { width: 100%; min-height: 46px; padding: 10px 36px 10px 12px; color: var(--ea-ink); background-color: var(--ea-white); border: 1px solid #aab49d; border-radius: 4px; font: inherit; }
 .ea-event-detail :is(input, select):focus-visible { outline: 3px solid #987249; outline-offset: 4px; }
 .ea-app button:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.ea-invite-form { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(170px, .65fr) auto; align-items: start; gap: 16px; }
+.ea-invite-form > button { margin-top: 32px; }
+.ea-event-section .ea-access-help { max-width: 80ch; font-size: 14px; margin: 16px 0 0; }
 .ea-section-count { color: var(--ea-muted); font: 400 16px var(--ea-sans); margin-left: 8px; }
 .ea-people-list { list-style: none; padding: 0; margin: 0; }
 .ea-person-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 0; border-top: 1px solid var(--ea-line); }
@@ -3049,12 +3052,17 @@
 .ea-event-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .ea-event-facts dt { color: var(--ea-muted); font-size: 14px; }
 .ea-event-facts dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.ea-invitation { overflow-wrap: anywhere; }
+.ea-invitation > p { margin: 16px 0; }
+.ea-invitation-actions { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-top: 24px; }
 @media (max-width: 1100px) {
+    .ea-invite-form { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .ea-invite-form > button { margin-top: 0; justify-self: start; grid-column: 1 / -1; }
     .ea-person-row { align-items: start; flex-wrap: wrap; }
     .ea-person-controls { justify-content: flex-start; }
 }
 @media (max-width: 560px) {
-    .ea-details-form, .ea-event-facts { grid-template-columns: 1fr; }
+    .ea-details-form, .ea-invite-form, .ea-event-facts { grid-template-columns: 1fr; }
     .ea-event-title { margin-top: 24px; }
     .ea-event-title h1 { font-size: 38px; }
     .ea-event-tabs { gap: 24px; }
@@ -3062,6 +3070,7 @@
     .ea-person-controls { width: 100%; }
     .ea-role-form { width: 100%; }
     .ea-role-form select { flex: 1; min-width: 0; }
+    .ea-invite-form > button { width: 100%; }
 }
 
 .ea-form-field .ea-type-choice {

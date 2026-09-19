@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\EventRole;
 use App\Http\Requests\UpdateEventMemberRequest;
 use App\Models\Event;
+use App\Models\EventInvitation;
 use App\Models\EventMember;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,6 +32,14 @@ class EventMemberController extends Controller
                 'role' => $member->role->value,
                 'canManage' => $request->user()->can('manageMember', [$event, $member]),
             ]),
+            'invitations' => $canManage ? $event->invitations()->with('inviter')->latest()->get()->map(fn (EventInvitation $invitation): array => [
+                'id' => $invitation->id,
+                'email' => $invitation->email,
+                'role' => $invitation->role->value,
+                'expires_at' => $invitation->expires_at->toIso8601String(),
+                'expired' => ! $invitation->setRelation('event', $event)->isUsable(),
+                'canManage' => $request->user()->can('invite', [$event, $invitation->role->value]),
+            ]) : [],
             'roles' => collect([EventRole::Admin, EventRole::Editor, EventRole::Viewer])
                 ->filter(fn (EventRole $role): bool => $request->user()->can('invite', [$event, $role->value]))
                 ->map(fn (EventRole $role): array => ['value' => $role->value, 'label' => $role->label()])->values(),

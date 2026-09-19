@@ -26,14 +26,16 @@ class EventAccessTest extends TestCase
         $this->get(route('events.show', $member->event))->assertOk();
     }
 
-    public function test_viewers_cannot_edit_event_or_members_and_do_not_receive_member_emails(): void
+    public function test_viewers_cannot_edit_event_or_members_and_do_not_receive_private_invitation_data(): void
     {
         $member = EventMember::factory()->create();
+        EventInvitation::factory()->for($member->event)->create();
 
         $this->actingAs($member->user)->get(route('events.people', $member->event))
             ->assertInertia(fn (Assert $page) => $page->where('can.manageMembers', false)
-                ->where('owner.email', null)->has('roles', 0));
+                ->where('owner.email', null)->has('invitations', 0)->has('roles', 0));
         $this->patch(route('events.update', $member->event), ['name' => 'Changed'])->assertForbidden();
+        $this->post(route('events.invitations.store', $member->event), ['email' => 'guest@example.com', 'role' => 'viewer'])->assertForbidden();
         $this->delete(route('events.destroy', $member->event), ['password' => 'password'])->assertForbidden();
         $this->assertDatabaseHas('events', ['id' => $member->event_id, 'name' => $member->event->name]);
     }
