@@ -64,7 +64,7 @@ const navigation = [
             </div>
 
             <nav class="ea-app-nav" aria-label="Main navigation">
-                <Link v-for="item in navigation" :key="item.route" :href="route(item.route)" :class="{ active: route().current(item.route) }" @click="showingNavigation = false">
+                <Link v-for="item in navigation" :key="item.route" :href="route(item.route)" :class="{ active: route().current(item.route === 'events.index' ? 'events.*' : item.route) }" @click="showingNavigation = false">
                     <AtelierIcon :name="item.icon" />
                     {{ item.label }}
                 </Link>
@@ -92,7 +92,10 @@ const navigation = [
                     <AtelierIcon name="menu" />
                 </button>
             </header>
-            <main id="main-content"><slot /></main>
+            <main id="main-content">
+                <div v-if="$page.props.flash?.status" :key="$page.props.flash.status" class="ea-app-feedback" role="status">{{ $page.props.flash.status }}</div>
+                <slot />
+            </main>
         </div>
     </div>
 </template>

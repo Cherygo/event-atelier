@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventMemberController;
+use App\Http\Controllers\EventOwnershipController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -17,8 +19,13 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/dashboard', '/events')->name('dashboard');
-    Route::resource('events', EventController::class)->only(['index', 'create', 'store']);
+    Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+    Route::get('/events/{event}/people', [EventMemberController::class, 'index'])->name('events.people');
+    Route::patch('/events/{event}/members/{member}', [EventMemberController::class, 'update'])->scopeBindings()->name('events.members.update');
+    Route::delete('/events/{event}/members/{member}', [EventMemberController::class, 'destroy'])->scopeBindings()->name('events.members.destroy');
+    Route::patch('/events/{event}/ownership', [EventOwnershipController::class, 'update'])->middleware('throttle:6,1')->name('events.ownership.update');
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
