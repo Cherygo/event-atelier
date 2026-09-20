@@ -46,6 +46,69 @@ composer run dev
 
 The `.env.example` defaults connect to the development database at `127.0.0.1:5432`, using database/user `event_atelier` and password `local-development-password`. Keep `DB_PASSWORD` consistent with the database's initialized password. Set `FORWARD_DB_PORT` and the host's `DB_PORT` together if port 5432 is occupied. The Docker application connects over the internal network; both workflows share the same PostgreSQL data. The development database port is bound to loopback only. Existing SQLite files are not imported automatically.
 
+## Testing invitation emails with Mailtrap Sandbox
+
+Email testing uses [Mailtrap Email Sandbox](https://docs.mailtrap.io/email-sandbox/overview). Messages appear in your Mailtrap inbox, **not your real email inbox**. You do not need a verified sending domain or the Mailtrap Email Sending API.
+
+1. Create a free [Mailtrap account](https://mailtrap.io/) and open your Email Sandbox inbox.
+2. Open the inbox's SMTP integration settings and copy its host, port, username, and password.
+3. Create a local `.env` from `.env.example` if you do not already have one. Set the following values, replacing the placeholders with your own Sandbox SMTP credentials:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_SCHEME=null
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_sandbox_username
+MAIL_PASSWORD=your_sandbox_password
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="Event Atelier"
+```
+
+Use the host and port shown in your Mailtrap inbox if they differ. Leave `MAIL_URL` unset so it does not override these settings. Keep credentials in your local, Git-ignored `.env`; never commit them or share them in screenshots.
+
+For host-based development, clear cached configuration and restart any running queue worker:
+
+```sh
+php artisan config:clear
+php artisan queue:restart
+```
+
+### Docker mail configuration
+
+The development Compose stack explicitly sets `MAIL_MAILER=log`, which takes precedence over `.env`. To enable Sandbox delivery, create a local `compose.override.yaml` with the following contents (no credentials belong in this file):
+
+```yaml
+services:
+  app:
+    environment:
+      MAIL_MAILER: smtp
+  queue:
+    environment:
+      MAIL_MAILER: smtp
+  scheduler:
+    environment:
+      MAIL_MAILER: smtp
+```
+
+The other mail settings are read from your local `.env`, mounted with the source files. Apply the override and clear cached configuration:
+
+```sh
+docker compose up -d --wait
+docker compose exec app app-entrypoint php artisan config:clear
+docker compose restart queue scheduler
+```
+
+### Try an invitation
+
+1. Register an Event Atelier account, create an event, and open **People & access**.
+2. Invite a different email address that does not already have access to the event. An unregistered address works; inviting yourself as the owner is intentionally blocked.
+3. Open the message in your Mailtrap Sandbox inbox and follow its invitation link. Use a private browser window or log out first, then register or sign in with the invited email address to accept.
+
+Invitation links expire after seven days. For local testing, open them on the machine running the application; a localhost link is not accessible from someone else's device.
+
+If the app reports success but no message arrives in your Sandbox, confirm the SMTP settings belong to that inbox and that `MAIL_MAILER` is not still `log`. The `MAILTRAP_*` variables and `php artisan mailtrap:send-test` command belong to a separate Email Sending API test; they are **not used by the invitation button**.
+
 ## Production Docker image
 
 The default Dockerfile target builds a standalone image with production Composer dependencies and compiled frontend assets. It runs as `www-data`, serves only `public/` on port 8080, and checks `/up` for health. Node, Composer, host secrets, local databases, and development dependencies are excluded from the final image.
@@ -70,64 +133,3 @@ The app binds to loopback port 8080 by default. Terminate HTTPS with your hostin
 For an external PostgreSQL or MySQL service, use the same image with your platform's environment variables and persistent upload storage; both PDO drivers are installed. The included Compose stacks intentionally use PostgreSQL.
 
 Run `sh tests/docker-smoke.sh` to build and verify production startup, HTTP responses, compiled assets, required-key validation, and database/upload persistence across container recreation. It uses isolated containers and volumes and removes them afterward.
-
----
-
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
-```
-
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
