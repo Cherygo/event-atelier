@@ -3047,7 +3047,7 @@
     .ea-task-editor { grid-template-columns: 1fr; padding: 18px; }
     .ea-live-task-top { flex-wrap: wrap; gap: 8px; }
     .ea-live-task-copy { flex-basis: 100%; }
-    .ea-task-search input { flex: 1; width: 180px; }
+    .ea-task-search input { flex: 1 0 100%; width: 100%; }
 }
 
 .ea-task-status-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
@@ -3099,6 +3099,10 @@
 }
 .ea-event-tabs a { display: inline-flex; align-items: center; min-height: 48px; padding: 10px 0; color: var(--ea-muted); border-bottom: 2px solid transparent; text-decoration: none; font-weight: 600; }
 .ea-event-tabs a[aria-current='page'] { color: var(--ea-forest); border-bottom-color: var(--ea-forest); }
+@media (max-width: 560px) {
+    .ea-event-tabs { flex-wrap: nowrap; gap: 16px; overflow-x: auto; }
+    .ea-event-tabs a { flex-shrink: 0; font-size: 14px; }
+}
 .ea-event-section { padding: 32px 0; border-bottom: 1px solid var(--ea-line); }
 .ea-event-section h2 { margin: 0 0 14px; font-size: 30px; }
 .ea-event-section > p { color: var(--ea-muted); margin: 0 0 22px; }
@@ -3141,7 +3145,7 @@
     .ea-details-form, .ea-invite-form, .ea-event-facts { grid-template-columns: 1fr; }
     .ea-event-title { margin-top: 24px; }
     .ea-event-title h1 { font-size: 38px; }
-    .ea-event-tabs { gap: 24px; }
+    .ea-event-tabs { gap: 16px; }
     .ea-person-row { gap: 14px; }
     .ea-person-controls { width: 100%; }
     .ea-role-form { width: 100%; }

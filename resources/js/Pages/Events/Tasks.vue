@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import EventTaskEditor from '@/Components/EventTaskEditor.vue';
 import EventTaskRow from '@/Components/EventTaskRow.vue';
@@ -10,6 +10,12 @@ const adding = ref(false);
 const addButton = ref(null);
 const heading = ref(null);
 const search = useForm({ search: props.filters.search, status: props.filters.status, due: props.filters.due, sort: props.filters.sort });
+watch(() => props.filters, (filters) => {
+    search.search = filters.search;
+    search.status = filters.status;
+    search.due = filters.due;
+    search.sort = filters.sort;
+});
 const statuses = { active: 'Active', todo: 'To do', in_progress: 'In progress', completed: 'Completed', all: 'All tasks' };
 const applyFilters = () => search.get(route('events.tasks.index', props.event.id), { preserveState: true, preserveScroll: true, replace: true });
 const openEditor = async () => { adding.value = true; await nextTick(); document.getElementById('task-new-title')?.focus(); };
@@ -43,7 +49,7 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
             </TransitionGroup>
             <div v-else class="ea-task-empty">
                 <h3>{{ tasks.total ? 'No tasks on this page.' : 'No tasks in this view yet.' }}</h3>
-                <p>{{ filters.search ? 'Try another phrase or clear the search.' : 'Choose another status to see more tasks, or add the next step to your plan.' }}</p>
+                <p>{{ filters.search ? 'Try another phrase or clear the search.' : canEdit ? 'Try another filter, or add the next step to your plan.' : 'Try another filter. Your team can add tasks to this plan.' }}</p>
             </div>
             <nav v-if="tasks.last_page > 1" class="ea-task-pagination" aria-label="Task pages">
                 <Link v-if="tasks.prev_page_url" :href="tasks.prev_page_url" class="ea-text-link" preserve-scroll>Previous</Link>
