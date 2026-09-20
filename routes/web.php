@@ -5,6 +5,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\EventMemberController;
 use App\Http\Controllers\EventOwnershipController;
+use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/dashboard', '/events')->name('dashboard');
     Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+    Route::resource('events.tasks', EventTaskController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::get('/events/{event}/people', [EventMemberController::class, 'index'])->name('events.people');
     Route::patch('/events/{event}/members/{member}', [EventMemberController::class, 'update'])->scopeBindings()->name('events.members.update');
     Route::delete('/events/{event}/members/{member}', [EventMemberController::class, 'destroy'])->scopeBindings()->name('events.members.destroy');

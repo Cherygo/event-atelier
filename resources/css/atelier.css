@@ -3013,6 +3013,39 @@
 @media (max-width: 560px) { .ea-events-header { display: grid; align-items: start; padding-bottom: 32px; }.ea-events-header .ea-button { width: 100%; }.ea-event-record { grid-template-columns: 1fr 24px; gap: 8px; padding: 23px 0; min-height: 0; }.ea-event-record-type, .ea-event-record-meta { grid-column: 1; }.ea-event-record-main { grid-column: 1; }.ea-event-record-arrow { grid-column: 2; grid-row: 1 / span 3; }.ea-event-record h2 { font-size: 27px; }.ea-empty-events { grid-template-columns: 1fr; gap: 28px; padding: 42px 0; }.ea-empty-events-arch { width: 112px; height: 140px; font-size: 52px; }.ea-event-form { grid-template-columns: 1fr; padding: 22px; }.ea-type-choice-grid { grid-template-columns: 1fr; }.ea-form-actions { align-items: stretch; flex-direction: column; }.ea-form-actions .ea-button { width: 100%; }.ea-create-intro h1 { font-size: 48px; } }
 @media (prefers-reduced-motion: reduce) { .ea-app *, .ea-app *::before, .ea-app *::after { scroll-behavior: auto !important; transition: none !important; } }
 
+.ea-task-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.ea-task-toolbar h2 { margin: 0; }
+.ea-task-readonly { margin: 8px 0 0; color: var(--ea-muted); }
+.ea-task-editor { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding: 24px; margin: 16px 0 24px; background: var(--ea-white); border: 1px solid var(--ea-line); border-radius: 4px; }
+.ea-task-editor textarea { width: 100%; min-height: 100px; resize: vertical; padding: 10px 12px; background: var(--ea-white); color: var(--ea-ink); border: 1px solid #aab49d; border-radius: 4px; font: inherit; }
+.ea-task-editor-actions, .ea-live-task-actions { display: flex; align-items: center; gap: 20px; }
+.ea-task-search { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+.ea-task-search input { width: min(100%, 320px); min-width: 0; min-height: 46px; padding: 10px 12px; background: var(--ea-white); border: 1px solid #aab49d; border-radius: 4px; font: inherit; color: var(--ea-ink); }
+.ea-live-task-list { list-style: none; padding: 0; margin: 0; }
+.ea-live-task { border-top: 1px solid var(--ea-line); padding: 22px 0; }
+.ea-live-task-top { display: flex; align-items: start; justify-content: space-between; gap: 24px; }
+.ea-live-task-copy { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.ea-live-task-copy h3 { font: 600 18px/1.45 var(--ea-sans); margin: 0; }
+.ea-live-task-category { display: inline-block; margin-top: 6px; color: var(--ea-muted); font-size: 14px; }
+.ea-live-task-actions { flex-shrink: 0; }
+.ea-task-notes { margin-top: 10px; font-size: 14px; }
+.ea-task-notes summary { cursor: pointer; min-height: 36px; padding: 6px 0; color: var(--ea-muted); }
+.ea-task-notes p { white-space: pre-wrap; margin: 8px 0 0; }
+.ea-task-confirm { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding-top: 16px; }
+.ea-task-confirm p { width: 100%; margin: 0; }
+.ea-task-empty { padding: 38px 0; border-top: 1px solid var(--ea-line); }
+.ea-task-empty h3 { font: 400 28px/1.2 var(--ea-display); margin: 0 0 12px; }
+.ea-task-empty p { color: var(--ea-muted); margin: 0; }
+.ea-task-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 24px; padding-top: 20px; border-top: 1px solid var(--ea-line); }
+.ea-live-task-enter-active, .ea-live-task-leave-active, .ea-live-task-move { transition: opacity .2s var(--ea-ease-out), transform .2s var(--ea-ease-out); }
+.ea-live-task-enter-from, .ea-live-task-leave-to { opacity: 0; transform: translateY(6px); }
+@media (max-width: 560px) {
+    .ea-task-editor { grid-template-columns: 1fr; padding: 18px; }
+    .ea-live-task-top { flex-wrap: wrap; gap: 8px; }
+    .ea-live-task-copy { flex-basis: 100%; }
+    .ea-task-search input { flex: 1; width: 180px; }
+}
+
 .ea-app-stage > main { display: flow-root; }
 .ea-app-feedback { max-width: 1080px; margin: 24px 6% 0; padding: 14px 18px; background: var(--ea-sage); border: 1px solid var(--ea-line); border-radius: 4px; }
 .ea-event-name-link { color: inherit; text-decoration: underline; text-decoration-color: var(--ea-line); text-underline-offset: 6px; }

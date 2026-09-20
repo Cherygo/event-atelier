@@ -50,6 +50,11 @@ class Event extends Model
         return $this->hasMany(EventMember::class);
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(EventTask::class);
+    }
+
     public function invitations(): HasMany
     {
         return $this->hasMany(EventInvitation::class);
