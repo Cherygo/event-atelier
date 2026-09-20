@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\EventRole;
 use Database\Factories\EventFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,6 +54,13 @@ class Event extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(EventTask::class);
+    }
+
+    public function assignableUsers(): Builder
+    {
+        return User::query()->where(function (Builder $query): void {
+            $query->where('id', $this->user_id)->orWhereIn('id', $this->members()->select('user_id')->whereIn('role', [EventRole::Admin, EventRole::Editor]));
+        });
     }
 
     public function invitations(): HasMany

@@ -5,7 +5,7 @@ import EventLayout from '@/Layouts/EventLayout.vue';
 import EventTaskEditor from '@/Components/EventTaskEditor.vue';
 import EventTaskRow from '@/Components/EventTaskRow.vue';
 
-const props = defineProps({ event: Object, tasks: Object, filters: Object, canEdit: Boolean, today: String });
+const props = defineProps({ event: Object, tasks: Object, filters: Object, canEdit: Boolean, today: String, assignees: Array });
 const adding = ref(false);
 const addButton = ref(null);
 const heading = ref(null);
@@ -26,7 +26,7 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
                 <div><h2 id="task-list-heading" ref="heading" tabindex="-1">Tasks <span class="ea-section-count">{{ tasks.total }}</span></h2><p v-if="!canEdit" class="ea-task-readonly">You have read-only access to this plan.</p></div>
                 <button v-if="canEdit && !adding" ref="addButton" type="button" class="ea-button" @click="openEditor">Add task</button>
             </div>
-            <EventTaskEditor v-if="adding" :event-id="event.id" @saved="closeEditor" @cancel="closeEditor" />
+            <EventTaskEditor v-if="adding" :event-id="event.id" :assignees="assignees" @saved="closeEditor" @cancel="closeEditor" />
             <div class="ea-task-status-filters" role="group" aria-label="Filter tasks by status">
                 <button v-for="(label, value) in statuses" :key="value" type="button" :aria-pressed="filters.status === value" :disabled="search.processing" @click="search.status = value; applyFilters()">{{ label }}</button>
             </div>
@@ -39,7 +39,7 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
                 <Link v-if="filters.search || filters.due !== 'all' || filters.sort !== 'newest'" :href="route('events.tasks.index', event.id)" class="ea-text-link">Clear filters</Link>
             </form>
             <TransitionGroup v-if="tasks.data.length" name="ea-live-task" tag="ul" class="ea-live-task-list">
-                <EventTaskRow v-for="task in tasks.data" :key="task.id" :task="task" :event-id="event.id" :can-edit="canEdit" :today="today" @removed="focusList" />
+                <EventTaskRow v-for="task in tasks.data" :key="task.id" :task="task" :event-id="event.id" :assignees="assignees" :can-edit="canEdit" :today="today" @removed="focusList" />
             </TransitionGroup>
             <div v-else class="ea-task-empty">
                 <h3>{{ tasks.total ? 'No tasks on this page.' : 'No tasks in this view yet.' }}</h3>

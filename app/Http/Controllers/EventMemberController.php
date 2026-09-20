@@ -58,6 +58,9 @@ class EventMemberController extends Controller
             Gate::authorize('manageMember', [$locked, $member]);
             Gate::authorize('invite', [$locked, $request->validated('role')]);
             $member->update($request->validated());
+            if ($member->role === EventRole::Viewer) {
+                $locked->tasks()->where('assigned_to', $member->user_id)->update(['assigned_to' => null]);
+            }
         });
 
         return back()->with('status', 'Role updated.');
@@ -70,6 +73,7 @@ class EventMemberController extends Controller
             $locked = Event::query()->lockForUpdate()->findOrFail($event->id);
             $member = $locked->members()->findOrFail($member->id);
             Gate::authorize('manageMember', [$locked, $member]);
+            $locked->tasks()->where('assigned_to', $member->user_id)->update(['assigned_to' => null]);
             $member->delete();
         });
 

@@ -3,11 +3,11 @@ import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 import InputError from '@/Components/InputError.vue';
 
-const props = defineProps({ eventId: Number, task: { type: Object, default: null } });
+const props = defineProps({ eventId: Number, assignees: Array, task: { type: Object, default: null } });
 const emit = defineEmits(['saved', 'cancel']);
 const prefix = 'task-' + (props.task?.id ?? 'new');
 const element = ref(null);
-const form = useForm({ title: props.task?.title ?? '', category: props.task?.category ?? '', notes: props.task?.notes ?? '', due_date: props.task?.due_date ?? '' });
+const form = useForm({ title: props.task?.title ?? '', category: props.task?.category ?? '', notes: props.task?.notes ?? '', due_date: props.task?.due_date ?? '', assigned_to: props.task?.assigned_to ?? '' });
 const save = () => {
     const options = {
         preserveScroll: true,
@@ -35,6 +35,11 @@ const save = () => {
             <label :for="prefix + '-due'">Due date <span>Optional</span></label>
             <input :id="prefix + '-due'" v-model="form.due_date" type="date" :aria-invalid="Boolean(form.errors.due_date)" :aria-describedby="prefix + '-due-error'" />
             <InputError :id="prefix + '-due-error'" :message="form.errors.due_date" />
+        </div>
+        <div class="ea-form-field ea-form-field-wide">
+            <label :for="prefix + '-assignee'">Assigned to <span>Optional</span></label>
+            <select :id="prefix + '-assignee'" v-model="form.assigned_to" :aria-invalid="Boolean(form.errors.assigned_to)" :aria-describedby="prefix + '-assignee-error'"><option value="">Unassigned</option><option v-for="person in assignees" :key="person.id" :value="person.id">{{ person.name }}</option></select>
+            <InputError :id="prefix + '-assignee-error'" :message="form.errors.assigned_to" />
         </div>
         <div class="ea-form-field ea-form-field-wide">
             <label :for="prefix + '-notes'">Notes <span>Optional</span></label>

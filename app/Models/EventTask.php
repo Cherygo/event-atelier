@@ -13,11 +13,16 @@ class EventTask extends Model
     /** @use HasFactory<EventTaskFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'notes', 'category', 'due_date'];
+    protected $fillable = ['title', 'notes', 'category', 'due_date', 'assigned_to'];
 
     protected function casts(): array
     {
         return ['status' => TaskStatus::class, 'completed_at' => 'datetime', 'due_date' => 'date:Y-m-d'];
+    }
+
+    public function assignee(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     public function event(): BelongsTo

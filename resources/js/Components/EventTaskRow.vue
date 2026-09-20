@@ -4,7 +4,7 @@ import { ref, nextTick, watch } from 'vue';
 import EventTaskEditor from '@/Components/EventTaskEditor.vue';
 import InputError from '@/Components/InputError.vue';
 
-const props = defineProps({ eventId: Number, task: Object, canEdit: Boolean, today: String });
+const props = defineProps({ eventId: Number, task: Object, canEdit: Boolean, today: String, assignees: Array });
 const emit = defineEmits(['removed']);
 const editing = ref(false);
 const confirming = ref(false);
@@ -36,6 +36,7 @@ const remove = () => removal.delete(route('events.tasks.destroy', [props.eventId
                     <span v-if="task.due_date" class="ea-task-deadline" :class="{ 'is-overdue': task.due_date < today && task.status !== 'completed' }">
                         {{ task.due_date < today && task.status !== 'completed' ? 'Overdue · ' : task.due_date === today ? 'Due today · ' : 'Due ' }}<time :datetime="task.due_date">{{ new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(task.due_date + 'T12:00:00')) }}</time>
                     </span>
+                    <span class="ea-task-assignee">{{ task.assignee?.name ?? 'Unassigned' }}</span>
                     <span v-if="status.processing" role="status" class="ea-task-saving">Saving…</span>
                     <InputError :message="status.errors.status" />
                 </div>
@@ -47,7 +48,7 @@ const remove = () => removal.delete(route('events.tasks.destroy', [props.eventId
                 <button type="button" class="ea-text-link" :aria-label="'Delete ' + task.title" @click="confirming = true">Delete</button>
             </div>
         </div>
-        <EventTaskEditor v-if="editing" :task="task" :event-id="eventId" @saved="closeEditor" @cancel="closeEditor" />
+        <EventTaskEditor v-if="editing" :task="task" :event-id="eventId" :assignees="assignees" @saved="closeEditor" @cancel="closeEditor" />
         <div v-if="confirming" class="ea-task-confirm" role="group" :aria-label="'Delete ' + task.title">
             <p>Delete this task? This cannot be undone.</p>
             <button type="button" class="ea-button ea-button-outline" :disabled="removal.processing" @click="remove">{{ removal.processing ? 'Deleting…' : 'Delete task' }}</button>

@@ -26,7 +26,7 @@ class EventTaskController extends Controller
             'due' => ['nullable', 'in:all,overdue,today,upcoming,unscheduled'],
             'sort' => ['nullable', 'in:newest,due'],
         ]);
-        $tasks = $event->tasks();
+        $tasks = $event->tasks()->with('assignee:id,name');
         $status = $filters['status'] ?? 'active';
         if ($status === 'active') {
             $tasks->where('status', '!=', TaskStatus::Completed);
@@ -57,6 +57,7 @@ class EventTaskController extends Controller
             'tasks' => $tasks->latest('id')->paginate(20)->withQueryString(),
             'filters' => ['search' => $filters['search'] ?? '', 'status' => $status, 'due' => $due, 'sort' => $sort],
             'today' => $today,
+            'assignees' => $event->assignableUsers()->orderBy('name')->get(['id', 'name']),
             'canEdit' => $request->user()->can('editPlanning', $event),
         ]);
     }
@@ -66,7 +67,7 @@ class EventTaskController extends Controller
         DB::transaction(function () use ($request, $event): void {
             $event = Event::query()->lockForUpdate()->findOrFail($event->id);
             Gate::authorize('editPlanning', $event);
-            $event->tasks()->create($request->validated());
+            $event->tasks()->create($request->forEvent($event));
         });
 
         return back()->with('status', 'Task added.');
@@ -77,7 +78,7 @@ class EventTaskController extends Controller
         DB::transaction(function () use ($request, $event, $task): void {
             $event = Event::query()->lockForUpdate()->findOrFail($event->id);
             Gate::authorize('editPlanning', $event);
-            $event->tasks()->findOrFail($task->id)->update($request->validated());
+            $event->tasks()->findOrFail($task->id)->update($request->forEvent($event));
         });
 
         return back()->with('status', 'Task saved.');
