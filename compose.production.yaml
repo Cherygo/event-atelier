@@ -1,0 +1,85 @@
+name: event-atelier-production
+
+x-app: &app
+  build:
+    context: .
+    target: production
+  image: event-atelier:${IMAGE_TAG:-production}
+  init: true
+  env_file: .env.docker.production
+  environment:
+    APP_ENV: production
+    APP_DEBUG: "false"
+    APP_KEY: ${APP_KEY:?Set APP_KEY in .env.docker.production and pass --env-file .env.docker.production}
+    APP_URL: ${APP_URL:?Set APP_URL in .env.docker.production}
+    LOG_CHANNEL: stderr
+    DB_CONNECTION: pgsql
+    DB_HOST: database
+    DB_PORT: 5432
+    DB_DATABASE: ${DB_DATABASE:-event_atelier}
+    DB_USERNAME: ${DB_USERNAME:-event_atelier}
+    DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.docker.production}
+    DB_URL: ""
+  volumes:
+    - storage:/var/www/html/storage
+
+services:
+  database:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-event_atelier}
+      POSTGRES_USER: ${DB_USERNAME:-event_atelier}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.docker.production}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  migrate:
+    <<: *app
+    command: [php, artisan, migrate, --force, --no-interaction]
+    restart: "no"
+    healthcheck:
+      disable: true
+    depends_on:
+      database:
+        condition: service_healthy
+
+  app:
+    <<: *app
+    stop_signal: SIGWINCH
+    ports:
+      - "${APP_BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-8080}:8080"
+    restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  queue:
+    <<: *app
+    command: [php, artisan, queue:work, --sleep=3, --tries=3, --timeout=60]
+    restart: unless-stopped
+    stop_grace_period: 90s
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  scheduler:
+    <<: *app
+    command: [php, artisan, schedule:work]
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  storage:
+  postgres:

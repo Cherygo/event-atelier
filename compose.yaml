@@ -1,0 +1,123 @@
+name: event-atelier-dev
+
+x-app: &app
+  build:
+    context: .
+    target: development
+    args:
+      LOCAL_UID: ${LOCAL_UID:-1000}
+      LOCAL_GID: ${LOCAL_GID:-1000}
+  image: event-atelier:development
+  init: true
+  environment:
+    APP_NAME: Event Atelier
+    APP_ENV: local
+    APP_DEBUG: "true"
+    APP_URL: http://localhost:${APP_PORT:-8000}
+    APP_KEY: ${DOCKER_APP_KEY:-${APP_KEY:-}}
+    DB_CONNECTION: pgsql
+    DB_HOST: database
+    DB_PORT: 5432
+    DB_DATABASE: event_atelier
+    DB_USERNAME: event_atelier
+    DB_PASSWORD: ${DB_PASSWORD:-local-development-password}
+    DB_URL: ""
+    SESSION_DRIVER: database
+    CACHE_STORE: database
+    QUEUE_CONNECTION: database
+    LOG_CHANNEL: stderr
+    MAIL_MAILER: log
+    VITE_DOCKER: "true"
+    VITE_PORT: ${VITE_PORT:-5173}
+    VITE_HMR_HOST: ${VITE_HMR_HOST:-localhost}
+    VITE_USE_POLLING: ${VITE_USE_POLLING:-false}
+  volumes:
+    - .:/var/www/html
+    - vendor:/var/www/html/vendor
+    - node_modules:/var/www/html/node_modules
+    - storage:/var/www/html/storage
+    - bootstrap_cache:/var/www/html/bootstrap/cache
+
+services:
+  database:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: event_atelier
+      POSTGRES_USER: event_atelier
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-local-development-password}
+    ports:
+      - "127.0.0.1:${FORWARD_DB_PORT:-5432}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  setup:
+    <<: *app
+    command:
+      - sh
+      - -ec
+      - |
+        composer install --prefer-dist --no-interaction --no-progress
+        npm ci --ignore-scripts
+        php artisan config:clear
+        php artisan migrate --force --no-interaction
+    restart: "no"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  app:
+    <<: *app
+    stop_signal: SIGWINCH
+    ports:
+      - "127.0.0.1:${APP_PORT:-8000}:8080"
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+      vite:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, "http://127.0.0.1:8080/up"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  vite:
+    <<: *app
+    command: [node, node_modules/vite/bin/vite.js, --host, 0.0.0.0]
+    ports:
+      - "127.0.0.1:${VITE_PORT:-5173}:${VITE_PORT:-5173}"
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD-SHELL, 'curl --fail --silent "http://127.0.0.1:$$VITE_PORT/@vite/client" > /dev/null']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  queue:
+    <<: *app
+    command: [php, artisan, queue:work, --sleep=3, --tries=3, --timeout=60]
+    stop_grace_period: 90s
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+  scheduler:
+    <<: *app
+    command: [php, artisan, schedule:work]
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+
+volumes:
+  vendor:
+  node_modules:
+  storage:
+  bootstrap_cache:
+  postgres:
