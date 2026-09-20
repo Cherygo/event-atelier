@@ -4,7 +4,7 @@ import { ref, nextTick, watch } from 'vue';
 import EventTaskEditor from '@/Components/EventTaskEditor.vue';
 import InputError from '@/Components/InputError.vue';
 
-const props = defineProps({ eventId: Number, task: Object, canEdit: Boolean });
+const props = defineProps({ eventId: Number, task: Object, canEdit: Boolean, today: String });
 const emit = defineEmits(['removed']);
 const editing = ref(false);
 const confirming = ref(false);
@@ -33,6 +33,9 @@ const remove = () => removal.delete(route('events.tasks.destroy', [props.eventId
                         <select v-model="status.status" :disabled="status.processing || removal.processing" @change="updateStatus"><option v-for="(label, value) in statusLabels" :key="value" :value="value">{{ label }}</option></select>
                     </label>
                     <span v-else class="ea-access-label">{{ statusLabels[task.status] }}</span>
+                    <span v-if="task.due_date" class="ea-task-deadline" :class="{ 'is-overdue': task.due_date < today && task.status !== 'completed' }">
+                        {{ task.due_date < today && task.status !== 'completed' ? 'Overdue · ' : task.due_date === today ? 'Due today · ' : 'Due ' }}<time :datetime="task.due_date">{{ new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(task.due_date + 'T12:00:00')) }}</time>
+                    </span>
                     <span v-if="status.processing" role="status" class="ea-task-saving">Saving…</span>
                     <InputError :message="status.errors.status" />
                 </div>

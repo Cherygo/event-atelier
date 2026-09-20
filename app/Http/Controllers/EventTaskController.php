@@ -23,6 +23,8 @@ class EventTaskController extends Controller
             'search' => ['nullable', 'string', 'max:180'],
             'page' => ['nullable', 'integer', 'min:1'],
             'status' => ['nullable', 'in:all,active,todo,in_progress,completed'],
+            'due' => ['nullable', 'in:all,overdue,today,upcoming,unscheduled'],
+            'sort' => ['nullable', 'in:newest,due'],
         ]);
         $tasks = $event->tasks();
         $status = $filters['status'] ?? 'active';
@@ -34,11 +36,27 @@ class EventTaskController extends Controller
         if (! empty($filters['search'])) {
             $tasks->where('title', 'like', '%'.$filters['search'].'%');
         }
+        $today = now()->toDateString();
+        $due = $filters['due'] ?? 'all';
+        if ($due === 'overdue') {
+            $tasks->where('due_date', '<', $today)->where('status', '!=', TaskStatus::Completed);
+        } elseif ($due === 'today') {
+            $tasks->where('due_date', $today);
+        } elseif ($due === 'upcoming') {
+            $tasks->where('due_date', '>', $today)->where('due_date', '<=', now()->addDays(7)->toDateString());
+        } elseif ($due === 'unscheduled') {
+            $tasks->whereNull('due_date');
+        }
+        $sort = $filters['sort'] ?? 'newest';
+        if ($sort === 'due') {
+            $tasks->orderByRaw('due_date IS NULL')->orderBy('due_date');
+        }
 
         return Inertia::render('Events/Tasks', [
             'event' => $event->only(['id', 'name']),
             'tasks' => $tasks->latest('id')->paginate(20)->withQueryString(),
-            'filters' => ['search' => $filters['search'] ?? '', 'status' => $status],
+            'filters' => ['search' => $filters['search'] ?? '', 'status' => $status, 'due' => $due, 'sort' => $sort],
+            'today' => $today,
             'canEdit' => $request->user()->can('editPlanning', $event),
         ]);
     }

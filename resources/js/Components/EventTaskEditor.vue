@@ -7,7 +7,7 @@ const props = defineProps({ eventId: Number, task: { type: Object, default: null
 const emit = defineEmits(['saved', 'cancel']);
 const prefix = 'task-' + (props.task?.id ?? 'new');
 const element = ref(null);
-const form = useForm({ title: props.task?.title ?? '', category: props.task?.category ?? '', notes: props.task?.notes ?? '' });
+const form = useForm({ title: props.task?.title ?? '', category: props.task?.category ?? '', notes: props.task?.notes ?? '', due_date: props.task?.due_date ?? '' });
 const save = () => {
     const options = {
         preserveScroll: true,
@@ -26,10 +26,15 @@ const save = () => {
             <input :id="prefix + '-title'" v-model="form.title" required maxlength="180" placeholder="e.g. Arrange a venue visit" :aria-invalid="Boolean(form.errors.title)" :aria-describedby="prefix + '-title-error'" />
             <InputError :id="prefix + '-title-error'" :message="form.errors.title" />
         </div>
-        <div class="ea-form-field ea-form-field-wide">
+        <div class="ea-form-field">
             <label :for="prefix + '-category'">Category <span>Optional</span></label>
             <input :id="prefix + '-category'" v-model="form.category" maxlength="60" placeholder="e.g. Venue, catering, programme" :aria-invalid="Boolean(form.errors.category)" :aria-describedby="prefix + '-category-error'" />
             <InputError :id="prefix + '-category-error'" :message="form.errors.category" />
+        </div>
+        <div class="ea-form-field">
+            <label :for="prefix + '-due'">Due date <span>Optional</span></label>
+            <input :id="prefix + '-due'" v-model="form.due_date" type="date" :aria-invalid="Boolean(form.errors.due_date)" :aria-describedby="prefix + '-due-error'" />
+            <InputError :id="prefix + '-due-error'" :message="form.errors.due_date" />
         </div>
         <div class="ea-form-field ea-form-field-wide">
             <label :for="prefix + '-notes'">Notes <span>Optional</span></label>

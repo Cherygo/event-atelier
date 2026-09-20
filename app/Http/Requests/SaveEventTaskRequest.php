@@ -20,6 +20,7 @@ class SaveEventTaskRequest extends FormRequest
             'title' => ['required', 'string', 'max:180'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'category' => ['nullable', 'string', 'max:60'],
+            'due_date' => ['nullable', 'date_format:Y-m-d'],
         ];
     }
 }

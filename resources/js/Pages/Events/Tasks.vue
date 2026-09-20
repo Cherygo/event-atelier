@@ -5,11 +5,11 @@ import EventLayout from '@/Layouts/EventLayout.vue';
 import EventTaskEditor from '@/Components/EventTaskEditor.vue';
 import EventTaskRow from '@/Components/EventTaskRow.vue';
 
-const props = defineProps({ event: Object, tasks: Object, filters: Object, canEdit: Boolean });
+const props = defineProps({ event: Object, tasks: Object, filters: Object, canEdit: Boolean, today: String });
 const adding = ref(false);
 const addButton = ref(null);
 const heading = ref(null);
-const search = useForm({ search: props.filters.search, status: props.filters.status });
+const search = useForm({ search: props.filters.search, status: props.filters.status, due: props.filters.due, sort: props.filters.sort });
 const statuses = { active: 'Active', todo: 'To do', in_progress: 'In progress', completed: 'Completed', all: 'All tasks' };
 const applyFilters = () => search.get(route('events.tasks.index', props.event.id), { preserveState: true, preserveScroll: true, replace: true });
 const openEditor = async () => { adding.value = true; await nextTick(); document.getElementById('task-new-title')?.focus(); };
@@ -33,11 +33,13 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
             <form class="ea-task-search" role="search" @submit.prevent="applyFilters">
                 <label class="sr-only" for="task-search">Search tasks</label>
                 <input id="task-search" v-model="search.search" type="search" maxlength="180" placeholder="Search tasks" />
+                <label class="ea-task-filter-field">Deadline<select v-model="search.due"><option value="all">Any date</option><option value="overdue">Overdue</option><option value="today">Due today</option><option value="upcoming">Next 7 days</option><option value="unscheduled">No due date</option></select></label>
+                <label class="ea-task-filter-field">Sort by<select v-model="search.sort"><option value="newest">Newest first</option><option value="due">Due date</option></select></label>
                 <button class="ea-button ea-button-outline" :disabled="search.processing">Search</button>
-                <Link v-if="filters.search" :href="route('events.tasks.index', event.id)" class="ea-text-link">Clear search</Link>
+                <Link v-if="filters.search || filters.due !== 'all' || filters.sort !== 'newest'" :href="route('events.tasks.index', event.id)" class="ea-text-link">Clear filters</Link>
             </form>
             <TransitionGroup v-if="tasks.data.length" name="ea-live-task" tag="ul" class="ea-live-task-list">
-                <EventTaskRow v-for="task in tasks.data" :key="task.id" :task="task" :event-id="event.id" :can-edit="canEdit" @removed="focusList" />
+                <EventTaskRow v-for="task in tasks.data" :key="task.id" :task="task" :event-id="event.id" :can-edit="canEdit" :today="today" @removed="focusList" />
             </TransitionGroup>
             <div v-else class="ea-task-empty">
                 <h3>{{ tasks.total ? 'No tasks on this page.' : 'No tasks in this view yet.' }}</h3>
