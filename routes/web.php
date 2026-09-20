@@ -4,6 +4,7 @@ use App\Http\Controllers\AcceptEventInvitationController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\EventMemberController;
+use App\Http\Controllers\EventOverviewController;
 use App\Http\Controllers\EventOwnershipController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTaskStatusController;
@@ -24,6 +25,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/dashboard', '/events')->name('dashboard');
     Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
+    Route::get('/events/{event}/overview', EventOverviewController::class)->name('events.overview');
     Route::resource('events.tasks', EventTaskController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::patch('/events/{event}/tasks/{task}/status', [EventTaskStatusController::class, 'update'])->scopeBindings()->name('events.tasks.status');
     Route::get('/events/{event}/people', [EventMemberController::class, 'index'])->name('events.people');

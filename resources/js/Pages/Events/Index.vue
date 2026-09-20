@@ -27,7 +27,7 @@ const eventCountLabel = computed(() => props.events.length === 1 ? '1 event in p
                 <article v-for="event in events" :key="event.id" class="ea-event-record">
                     <div class="ea-event-record-type">{{ displayType(event.type) }}</div>
                     <div class="ea-event-record-main">
-                        <h2><Link :href="route('events.show', event.id)" class="ea-event-name-link">{{ event.name }}</Link></h2>
+                        <h2><Link :href="route('events.overview', event.id)" class="ea-event-name-link">{{ event.name }}</Link></h2>
                         <p><span v-if="event.event_date">{{ event.event_date }}</span><span v-if="event.event_date && event.location"> · </span><span v-if="event.location">{{ event.location }}</span><span v-if="!event.event_date && !event.location">Details can be added as your plan takes shape.</span></p>
                     </div>
                     <div class="ea-event-record-meta"><span v-if="event.guest_count">{{ event.guest_count }} guests</span><span v-else>Workspace setup</span></div>
