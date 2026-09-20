@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SaveEventTaskRequest;
 use App\Models\Event;
 use App\Models\EventTask;
+use App\TaskStatus;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,8 +19,18 @@ class EventTaskController extends Controller
     {
         $event->load('members');
         Gate::authorize('view', $event);
-        $filters = $request->validate(['search' => ['nullable', 'string', 'max:180'], 'page' => ['nullable', 'integer', 'min:1']]);
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:180'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'status' => ['nullable', 'in:all,active,todo,in_progress,completed'],
+        ]);
         $tasks = $event->tasks();
+        $status = $filters['status'] ?? 'active';
+        if ($status === 'active') {
+            $tasks->where('status', '!=', TaskStatus::Completed);
+        } elseif ($status !== 'all') {
+            $tasks->where('status', $status);
+        }
         if (! empty($filters['search'])) {
             $tasks->where('title', 'like', '%'.$filters['search'].'%');
         }
@@ -27,7 +38,7 @@ class EventTaskController extends Controller
         return Inertia::render('Events/Tasks', [
             'event' => $event->only(['id', 'name']),
             'tasks' => $tasks->latest('id')->paginate(20)->withQueryString(),
-            'filters' => ['search' => $filters['search'] ?? ''],
+            'filters' => ['search' => $filters['search'] ?? '', 'status' => $status],
             'canEdit' => $request->user()->can('editPlanning', $event),
         ]);
     }

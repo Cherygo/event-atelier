@@ -3046,6 +3046,14 @@
     .ea-task-search input { flex: 1; width: 180px; }
 }
 
+.ea-task-status-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.ea-task-status-filters button { min-height: 44px; padding: 10px 15px; border: 1px solid var(--ea-line); border-radius: 4px; font-weight: 600; color: var(--ea-muted); }
+.ea-task-status-filters button[aria-pressed='true'] { background: var(--ea-forest); color: var(--ea-white); border-color: var(--ea-forest); }
+.ea-live-task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
+.ea-task-status-control select { width: auto; min-height: 44px; font-size: 14px; }
+.ea-live-task.is-completed h3 { color: var(--ea-muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+.ea-live-task.is-completed .ea-task-status-control select { background-color: var(--ea-sage); }
+.ea-task-saving { color: var(--ea-muted); font-size: 14px; }
 .ea-app-stage > main { display: flow-root; }
 .ea-app-feedback { max-width: 1080px; margin: 24px 6% 0; padding: 14px 18px; background: var(--ea-sage); border: 1px solid var(--ea-line); border-radius: 4px; }
 .ea-event-name-link { color: inherit; text-decoration: underline; text-decoration-color: var(--ea-line); text-underline-offset: 6px; }

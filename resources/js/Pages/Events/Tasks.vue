@@ -9,7 +9,8 @@ const props = defineProps({ event: Object, tasks: Object, filters: Object, canEd
 const adding = ref(false);
 const addButton = ref(null);
 const heading = ref(null);
-const search = useForm({ search: props.filters.search });
+const search = useForm({ search: props.filters.search, status: props.filters.status });
+const statuses = { active: 'Active', todo: 'To do', in_progress: 'In progress', completed: 'Completed', all: 'All tasks' };
 const applyFilters = () => search.get(route('events.tasks.index', props.event.id), { preserveState: true, preserveScroll: true, replace: true });
 const openEditor = async () => { adding.value = true; await nextTick(); document.getElementById('task-new-title')?.focus(); };
 const closeEditor = async () => { adding.value = false; await nextTick(); addButton.value?.focus(); };
@@ -26,6 +27,9 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
                 <button v-if="canEdit && !adding" ref="addButton" type="button" class="ea-button" @click="openEditor">Add task</button>
             </div>
             <EventTaskEditor v-if="adding" :event-id="event.id" @saved="closeEditor" @cancel="closeEditor" />
+            <div class="ea-task-status-filters" role="group" aria-label="Filter tasks by status">
+                <button v-for="(label, value) in statuses" :key="value" type="button" :aria-pressed="filters.status === value" :disabled="search.processing" @click="search.status = value; applyFilters()">{{ label }}</button>
+            </div>
             <form class="ea-task-search" role="search" @submit.prevent="applyFilters">
                 <label class="sr-only" for="task-search">Search tasks</label>
                 <input id="task-search" v-model="search.search" type="search" maxlength="180" placeholder="Search tasks" />
@@ -36,8 +40,8 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
                 <EventTaskRow v-for="task in tasks.data" :key="task.id" :task="task" :event-id="event.id" :can-edit="canEdit" @removed="focusList" />
             </TransitionGroup>
             <div v-else class="ea-task-empty">
-                <h3>{{ filters.search ? 'No tasks match your search.' : tasks.total ? 'No tasks on this page.' : 'Make a start, one task at a time.' }}</h3>
-                <p>{{ filters.search ? 'Try another phrase or clear the search.' : canEdit ? 'Add the next thing that needs attention for this occasion.' : 'Tasks will appear here when your planning circle adds them.' }}</p>
+                <h3>{{ tasks.total ? 'No tasks on this page.' : 'No tasks in this view yet.' }}</h3>
+                <p>{{ filters.search ? 'Try another phrase or clear the search.' : 'Choose another status to see more tasks, or add the next step to your plan.' }}</p>
             </div>
             <nav v-if="tasks.last_page > 1" class="ea-task-pagination" aria-label="Task pages">
                 <Link v-if="tasks.prev_page_url" :href="tasks.prev_page_url" class="ea-text-link" preserve-scroll>Previous</Link>
