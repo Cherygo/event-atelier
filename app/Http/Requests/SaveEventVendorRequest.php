@@ -28,8 +28,8 @@ class SaveEventVendorRequest extends FormRequest
             'website' => ['nullable', 'url:http,https', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'status' => ['sometimes', 'required', Rule::enum(VendorStatus::class)],
-            'quote_amount' => ['nullable', 'numeric', 'decimal:0,2', 'min:0', 'max:9999999999.99'],
-            'currency' => ['nullable', 'required_with:quote_amount', Rule::in(EventVendor::CURRENCIES)],
+            'quote_amount' => ['present_with:currency', 'nullable', 'numeric', 'decimal:0,2', 'min:0', 'max:9999999999.99'],
+            'currency' => ['present_with:quote_amount', 'nullable', 'required_with:quote_amount', Rule::in(EventVendor::CURRENCIES)],
             'quote_details' => ['nullable', 'string', 'max:2000'],
         ];
     }

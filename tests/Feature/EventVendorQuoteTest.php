@@ -14,6 +14,17 @@ class EventVendorQuoteTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_partial_updates_cannot_remove_currency_from_an_existing_quote(): void
+    {
+        $event = Event::factory()->create();
+        $vendor = EventVendor::factory()->for($event)->create(['quote_amount' => '1200.50', 'currency' => 'EUR']);
+        $this->actingAs($event->user)->patch(route('events.vendors.update', [$event, $vendor]), [
+            'name' => $vendor->name, 'category' => $vendor->category, 'currency' => null,
+        ])->assertSessionHasErrors('quote_amount');
+        $this->assertSame('EUR', $vendor->fresh()->currency);
+        $this->assertSame('1200.50', $vendor->fresh()->quote_amount);
+    }
+
     public function test_quotes_preserve_cents_distinguish_zero_from_unknown_and_can_be_cleared(): void
     {
         $event = Event::factory()->create();
@@ -59,6 +70,6 @@ class EventVendorQuoteTest extends TestCase
         EventVendor::factory()->for($event)->create(['status' => 'shortlisted']);
         EventVendor::factory()->create(['status' => 'booked']);
         $this->actingAs($event->user)->get(route('events.vendors.index', ['event' => $event, 'status' => 'booked']))
-            ->assertInertia(fn (Assert $page) => $page->where('vendors.total', 1)->where('vendors.data.0.id', $booked->id)->where('filters.status','booked'));
+            ->assertInertia(fn (Assert $page) => $page->where('vendors.total', 1)->where('vendors.data.0.id', $booked->id)->where('filters.status', 'booked'));
     }
 }
