@@ -1,10 +1,23 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, useRemember, router } from '@inertiajs/vue3';
 import { nextTick, ref, watch } from 'vue';
 import { formatQuote } from '@/vendorFormat';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import EventVendorEditor from '@/Components/EventVendorEditor.vue';
 const props = defineProps({ event: Object, vendors: Object, categories: Array, filters: Object, canEdit: Boolean, statuses: Object, currencies: Array });
+const selected = useRemember([], 'vendor-comparison-' + props.event.id);
+const selectionMessage = ref('');
+const comparing = ref(false);
+const toggleSelection = vendor => {
+    selectionMessage.value = '';
+    if (selected.value.some(item => item.id === vendor.id)) selected.value = selected.value.filter(item => item.id !== vendor.id);
+    else if (selected.value.length < 4) selected.value.push({ id: vendor.id, name: vendor.name });
+    else selectionMessage.value = 'Compare up to four vendors. Remove one before adding another.';
+};
+const compare = () => {
+    comparing.value = true;
+    router.get(route('events.vendors.compare', props.event.id), { vendors: selected.value.map(v => v.id) }, { onFinish: () => { comparing.value = false; } });
+};
 const adding = ref(false);
 const editing = ref(null);
 const deleting = ref(null);
@@ -25,7 +38,7 @@ const closeEditor = async () => {
     (previous ? document.getElementById('edit-vendor-' + previous) : addButton.value)?.focus();
 };
 const remove = vendor => removal.delete(route('events.vendors.destroy', [props.event.id, vendor.id]), {
-    preserveScroll: true, onSuccess: async () => { deleting.value = null; await nextTick(); heading.value?.focus(); },
+    preserveScroll: true, onSuccess: async () => { deleting.value = null; selected.value = selected.value.filter(item => item.id !== vendor.id); await nextTick(); heading.value?.focus(); },
 });
 </script>
 
@@ -50,7 +63,7 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
             <ul v-if="vendors.data.length" class="ea-vendor-list">
                 <li v-for="vendor in vendors.data" :key="vendor.id" class="ea-vendor-record">
                     <div class="ea-vendor-record-heading">
-                        <div><span class="ea-live-task-category">{{ vendor.category }}</span><h3>{{ vendor.name }}</h3></div>
+                        <div><span class="ea-live-task-category">{{ vendor.category }}</span><h3>{{ vendor.name }}</h3><label class="ea-vendor-select"><input type="checkbox" :checked="selected.some(item => item.id === vendor.id)" :disabled="selected.length >= 4 && !selected.some(item => item.id === vendor.id)" @change="toggleSelection(vendor)" /> Compare<span class="sr-only"> {{ vendor.name }}</span></label></div>
                         <div v-if="canEdit && editing !== vendor.id" class="ea-live-task-actions">
                             <button :id="'edit-vendor-' + vendor.id" class="ea-text-link" :aria-label="'Edit ' + vendor.name" @click="openEditor(vendor)">Edit</button>
                             <button class="ea-text-link" :aria-label="'Delete ' + vendor.name" @click="deleting = vendor.id">Delete</button>
@@ -85,6 +98,13 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
                 <span>Page {{ vendors.current_page }} of {{ vendors.last_page }}</span>
                 <Link v-if="vendors.next_page_url" :href="vendors.next_page_url" preserve-scroll class="ea-text-link">Next</Link>
             </nav>
+            <div class="ea-vendor-compare-bar">
+                <div><strong aria-live="polite">{{ selected.length }} of 4 selected</strong><p>Select two to four vendors to compare.</p></div>
+                <button class="ea-button" :disabled="selected.length < 2 || comparing" @click="compare">{{ comparing ? 'Opening…' : 'Compare vendors' }}</button>
+                <button v-if="selected.length" class="ea-text-link" @click="selected = []; selectionMessage = ''">Clear selection</button>
+                <ul v-if="selected.length" class="ea-vendor-selected"><li v-for="item in selected" :key="item.id"><button :aria-label="'Remove ' + item.name + ' from comparison'" @click="toggleSelection(item)">{{ item.name }} <span aria-hidden="true">×</span></button></li></ul>
+                <p v-if="selectionMessage" role="status">{{ selectionMessage }}</p>
+            </div>
         </section>
     </EventLayout>
 </template>

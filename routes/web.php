@@ -8,6 +8,7 @@ use App\Http\Controllers\EventOverviewController;
 use App\Http\Controllers\EventOwnershipController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTaskStatusController;
+use App\Http\Controllers\EventVendorComparisonController;
 use App\Http\Controllers\EventVendorController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -29,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/events/{event}/overview', EventOverviewController::class)->name('events.overview');
     Route::resource('events.tasks', EventTaskController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::resource('events.vendors', EventVendorController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
+    Route::get('/events/{event}/vendors/compare', EventVendorComparisonController::class)->name('events.vendors.compare');
     Route::patch('/events/{event}/tasks/{task}/status', [EventTaskStatusController::class, 'update'])->scopeBindings()->name('events.tasks.status');
     Route::get('/events/{event}/people', [EventMemberController::class, 'index'])->name('events.people');
     Route::patch('/events/{event}/members/{member}', [EventMemberController::class, 'update'])->scopeBindings()->name('events.members.update');
