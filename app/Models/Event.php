@@ -56,6 +56,11 @@ class Event extends Model
         return $this->hasMany(EventTask::class);
     }
 
+    public function vendors(): HasMany
+    {
+        return $this->hasMany(EventVendor::class);
+    }
+
     public function assignableUsers(): Builder
     {
         return User::query()->where(function (Builder $query): void {
