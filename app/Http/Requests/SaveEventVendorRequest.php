@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\EventVendor;
+use App\VendorStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class SaveEventVendorRequest extends FormRequest
 {
@@ -24,6 +27,10 @@ class SaveEventVendorRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:60'],
             'website' => ['nullable', 'url:http,https', 'max:2048'],
             'notes' => ['nullable', 'string', 'max:5000'],
+            'status' => ['sometimes', 'required', Rule::enum(VendorStatus::class)],
+            'quote_amount' => ['nullable', 'numeric', 'decimal:0,2', 'min:0', 'max:9999999999.99'],
+            'currency' => ['nullable', 'required_with:quote_amount', Rule::in(EventVendor::CURRENCIES)],
+            'quote_details' => ['nullable', 'string', 'max:2000'],
         ];
     }
 }

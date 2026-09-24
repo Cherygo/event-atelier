@@ -1,17 +1,18 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { nextTick, ref, watch } from 'vue';
+import { formatQuote } from '@/vendorFormat';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import EventVendorEditor from '@/Components/EventVendorEditor.vue';
-const props = defineProps({ event: Object, vendors: Object, categories: Array, filters: Object, canEdit: Boolean });
+const props = defineProps({ event: Object, vendors: Object, categories: Array, filters: Object, canEdit: Boolean, statuses: Object, currencies: Array });
 const adding = ref(false);
 const editing = ref(null);
 const deleting = ref(null);
 const addButton = ref(null);
 const heading = ref(null);
 const removal = useForm({});
-const search = useForm({ search: props.filters.search, category: props.filters.category });
-watch(() => props.filters, filters => { search.search = filters.search; search.category = filters.category; });
+const search = useForm({ search: props.filters.search, category: props.filters.category, status: props.filters.status });
+watch(() => props.filters, filters => { search.search = filters.search; search.category = filters.category; search.status = filters.status; });
 const applyFilters = () => search.get(route('events.vendors.index', props.event.id), { preserveState: true, preserveScroll: true, replace: true });
 const openEditor = async (vendor = null) => {
     adding.value = !vendor; editing.value = vendor?.id ?? null; deleting.value = null;
@@ -37,13 +38,14 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
                 <div><h2 id="vendors-heading" ref="heading" tabindex="-1">Vendors <span class="ea-section-count">{{ vendors.total }}</span></h2><p class="ea-vendor-intro">{{ canEdit ? 'Keep contacts and decisions together, from first conversation to the final choice.' : 'You have read-only access. Browse the vendors your team is considering.' }}</p></div>
                 <button v-if="canEdit && !adding" ref="addButton" class="ea-button" type="button" @click="openEditor()">Add vendor</button>
             </div>
-            <EventVendorEditor v-if="adding" :event-id="event.id" :categories="categories" @saved="closeEditor" @cancel="closeEditor" />
+            <EventVendorEditor v-if="adding" :event-id="event.id" :categories="categories" :statuses="statuses" :currencies="currencies" @saved="closeEditor" @cancel="closeEditor" />
             <form class="ea-task-search" role="search" @submit.prevent="applyFilters">
                 <label class="sr-only" for="vendor-search">Search vendors</label>
                 <input id="vendor-search" v-model="search.search" type="search" maxlength="180" placeholder="Search vendors" />
                 <label class="ea-task-filter-field">Category<select v-model="search.category"><option value="">All categories</option><option v-for="category in categories" :key="category" :value="category">{{ category }}</option></select></label>
+                <label class="ea-task-filter-field">Status<select v-model="search.status"><option value="all">All statuses</option><option v-for="(label, value) in statuses" :key="value" :value="value">{{ label }}</option></select></label>
                 <button class="ea-button ea-button-outline" :disabled="search.processing">Search</button>
-                <Link v-if="filters.search || filters.category" :href="route('events.vendors.index', event.id)" class="ea-text-link">Clear filters</Link>
+                <Link v-if="filters.search || filters.category || filters.status !== 'all'" :href="route('events.vendors.index', event.id)" class="ea-text-link">Clear filters</Link>
             </form>
             <ul v-if="vendors.data.length" class="ea-vendor-list">
                 <li v-for="vendor in vendors.data" :key="vendor.id" class="ea-vendor-record">
@@ -54,8 +56,10 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
                             <button class="ea-text-link" :aria-label="'Delete ' + vendor.name" @click="deleting = vendor.id">Delete</button>
                         </div>
                     </div>
-                    <EventVendorEditor v-if="editing === vendor.id" :vendor="vendor" :event-id="event.id" :categories="categories" @saved="closeEditor" @cancel="closeEditor" />
+                    <EventVendorEditor v-if="editing === vendor.id" :vendor="vendor" :event-id="event.id" :categories="categories" :statuses="statuses" :currencies="currencies" @saved="closeEditor" @cancel="closeEditor" />
                     <template v-else>
+                        <div class="ea-vendor-decision"><span class="ea-vendor-status" :class="'is-' + vendor.status">{{ statuses[vendor.status] }}</span><strong>{{ formatQuote(vendor) }}</strong></div>
+                        <details v-if="vendor.quote_details" class="ea-task-notes ea-vendor-quote-details"><summary>Quote details</summary><p>{{ vendor.quote_details }}</p></details>
                         <dl v-if="vendor.contact_name || vendor.email || vendor.phone || vendor.website" class="ea-vendor-contact">
                             <div v-if="vendor.contact_name"><dt>Contact</dt><dd>{{ vendor.contact_name }}</dd></div>
                             <div v-if="vendor.email"><dt>Email</dt><dd><a :href="'mailto:' + vendor.email">{{ vendor.email }}</a></dd></div>
@@ -73,8 +77,8 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
                 </li>
             </ul>
             <div v-else class="ea-task-empty">
-                <h3>{{ filters.search || filters.category ? 'No vendors match this view.' : 'A good event starts with the right people.' }}</h3>
-                <p>{{ filters.search || filters.category ? 'Try another search or clear the filters.' : canEdit ? 'Add a venue, caterer, or another partner you’re considering. Only your event team can see these details.' : 'Your team hasn’t added vendors yet. They’ll appear here when the planning begins.' }}</p>
+                <h3>{{ filters.search || filters.category || filters.status !== 'all' ? 'No vendors match this view.' : 'A good event starts with the right people.' }}</h3>
+                <p>{{ filters.search || filters.category || filters.status !== 'all' ? 'Try another search or clear the filters.' : canEdit ? 'Add a venue, caterer, or another partner you’re considering. Only your event team can see these details.' : 'Your team hasn’t added vendors yet. They’ll appear here when the planning begins.' }}</p>
             </div>
             <nav v-if="vendors.last_page > 1" class="ea-task-pagination" aria-label="Vendor pages">
                 <Link v-if="vendors.prev_page_url" :href="vendors.prev_page_url" preserve-scroll class="ea-text-link">Previous</Link>

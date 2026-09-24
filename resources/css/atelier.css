@@ -3026,6 +3026,14 @@
 .ea-vendor-contact dd { margin: 0; }
 .ea-vendor-contact a { text-decoration: underline; text-underline-offset: 4px; }
 .ea-vendor-muted { color: var(--ea-muted); font-size: 14px; margin: 0; }
+.ea-vendor-decision { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-bottom: 18px; }
+.ea-vendor-decision strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.ea-vendor-status { display: inline-flex; padding: 5px 10px; font-size: 13px; border-radius: 4px; background: var(--ea-sage); color: var(--ea-forest); }
+.ea-vendor-status.is-booked { background: var(--ea-forest); color: var(--ea-white); }
+.ea-vendor-status.is-shortlisted { background: var(--ea-rose); color: var(--ea-rose-ink); }
+.ea-vendor-status.is-declined { background: transparent; border: 1px solid var(--ea-line); color: var(--ea-muted); }
+.ea-vendor-field-help { margin: 8px 0 0; color: var(--ea-muted); font-size: 14px; }
+.ea-vendor-quote-details { margin-bottom: 18px; }
 .ea-vendor-editor h3 { font: 400 28px/1.2 var(--ea-display); margin: 0; }
 @media (max-width: 560px) {
     .ea-vendor-contact { grid-template-columns: minmax(0, 1fr); }
