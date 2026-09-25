@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventVendor;
 use App\VendorStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -24,7 +25,7 @@ class EventVendorComparisonController extends Controller
 
         return Inertia::render('Events/VendorComparison', [
             'event' => $event->only(['id', 'name']),
-            'vendors' => collect($validated['vendors'])->map(fn ($id) => $vendors->get($id))->values(),
+            'vendors' => collect($validated['vendors'])->map(fn (int|string $id): EventVendor => $vendors->get($id))->values(),
             'statuses' => collect(VendorStatus::cases())->mapWithKeys(fn (VendorStatus $status): array => [$status->value => $status->label()]),
             'canEdit' => $request->user()->can('editPlanning', $event),
         ]);
