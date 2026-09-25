@@ -60,6 +60,14 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
                 <button class="ea-button ea-button-outline" :disabled="search.processing">Search</button>
                 <Link v-if="filters.search || filters.category || filters.status !== 'all'" :href="route('events.vendors.index', event.id)" class="ea-text-link">Clear filters</Link>
             </form>
+            <p v-if="vendors.total > 1" class="ea-vendor-muted">Select two to four vendors to compare their quotes and details.</p>
+            <div v-if="selected.length" class="ea-vendor-compare-bar">
+                <div><strong aria-live="polite">{{ selected.length }} of 4 selected</strong><p>Select two to four vendors to compare.</p></div>
+                <button class="ea-button" :disabled="selected.length < 2 || comparing" @click="compare">{{ comparing ? 'Opening…' : 'Compare vendors' }}</button>
+                <button v-if="selected.length" class="ea-text-link" @click="selected = []; selectionMessage = ''">Clear selection</button>
+                <details class="ea-vendor-selection-details"><summary>Selected vendors</summary><ul class="ea-vendor-selected"><li v-for="item in selected" :key="item.id"><button :aria-label="'Remove ' + item.name + ' from comparison'" @click="toggleSelection(item)">{{ item.name }} <span aria-hidden="true">×</span></button></li></ul></details>
+                <p v-if="selectionMessage" role="status">{{ selectionMessage }}</p>
+            </div>
             <ul v-if="vendors.data.length" class="ea-vendor-list">
                 <li v-for="vendor in vendors.data" :key="vendor.id" class="ea-vendor-record">
                     <div class="ea-vendor-record-heading">
@@ -98,12 +106,9 @@ const remove = vendor => removal.delete(route('events.vendors.destroy', [props.e
                 <span>Page {{ vendors.current_page }} of {{ vendors.last_page }}</span>
                 <Link v-if="vendors.next_page_url" :href="vendors.next_page_url" preserve-scroll class="ea-text-link">Next</Link>
             </nav>
-            <div class="ea-vendor-compare-bar">
-                <div><strong aria-live="polite">{{ selected.length }} of 4 selected</strong><p>Select two to four vendors to compare.</p></div>
-                <button class="ea-button" :disabled="selected.length < 2 || comparing" @click="compare">{{ comparing ? 'Opening…' : 'Compare vendors' }}</button>
-                <button v-if="selected.length" class="ea-text-link" @click="selected = []; selectionMessage = ''">Clear selection</button>
-                <ul v-if="selected.length" class="ea-vendor-selected"><li v-for="item in selected" :key="item.id"><button :aria-label="'Remove ' + item.name + ' from comparison'" @click="toggleSelection(item)">{{ item.name }} <span aria-hidden="true">×</span></button></li></ul>
-                <p v-if="selectionMessage" role="status">{{ selectionMessage }}</p>
+            <div v-if="selected.length >= 2" class="ea-vendor-compare-footer">
+                <button class="ea-button" :disabled="comparing" @click="compare">{{ comparing ? 'Opening…' : 'Compare vendors' }}</button>
+                <span>{{ selected.length }} vendors selected</span>
             </div>
         </section>
     </EventLayout>
