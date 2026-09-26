@@ -2961,6 +2961,32 @@
 }
 
 /* Authenticated planning shell */
+.ea-budget-totals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 24px; margin: 24px 0; background: var(--ea-sage); border-radius: 8px; }
+.ea-budget-totals dt, .ea-expense-amounts dt { color: var(--ea-muted); font-size: 14px; }
+.ea-budget-totals dd { margin: 6px 0 0; font-size: clamp(20px, 2vw, 28px); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.ea-budget-totals .ea-budget-over :is(dt, dd) { color: var(--ea-rose-ink); }
+.ea-budget-settings { margin-block: 20px; }
+.ea-budget-ledger summary { cursor: pointer; min-height: 44px; padding-block: 10px; }
+.ea-budget-ledger :is(input, textarea)::placeholder { color: var(--ea-muted); opacity: 1; }
+.ea-budget-caption { margin-block: 24px 12px; color: var(--ea-muted); font-size: 14px; }
+.ea-expense-list { list-style: none; margin: 0; padding: 0; }
+.ea-expense-record { padding-block: 24px; border-top: 1px solid var(--ea-line); }
+.ea-expense-heading { display: flex; align-items: flex-start; gap: 24px; }
+.ea-expense-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.ea-expense-name h3 { margin: 0 0 5px; font-size: 18px; font-weight: 600; }
+.ea-expense-name > span { color: var(--ea-muted); font-size: 14px; }
+.ea-expense-amounts { display: flex; gap: 24px; margin: 0; text-align: right; }
+.ea-expense-amounts dd { margin: 5px 0 0; font-variant-numeric: tabular-nums; }
+.ea-expense-notes { margin-top: 12px; color: var(--ea-muted); font-size: 14px; }
+.ea-expense-notes p { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 700px) {
+    .ea-budget-totals { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
+    .ea-budget-totals > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+    .ea-budget-totals dd { font-size: 20px; text-align: right; margin: 0; }
+    .ea-expense-heading { flex-wrap: wrap; gap: 16px; }
+    .ea-expense-name { flex-basis: 100%; }
+    .ea-expense-amounts { flex: 1; flex-wrap: wrap; text-align: left; gap: 12px 24px; }
+}
 .ea-app {
     --ea-paper: #f8f5ed;
     --ea-white: #fffdf7;

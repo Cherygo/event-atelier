@@ -15,6 +15,7 @@ defineProps({ event: { type: Object, required: true } });
                 <Link :href="route('events.overview', event.id)" :aria-current="route().current('events.overview') ? 'page' : undefined">Overview</Link>
                 <Link :href="route('events.tasks.index', event.id)" :aria-current="route().current('events.tasks.*') ? 'page' : undefined">Tasks</Link>
                 <Link :href="route('events.vendors.index', event.id)" :aria-current="route().current('events.vendors.*') ? 'page' : undefined">Vendors</Link>
+                <Link :href="route('events.budget.index', event.id)" :aria-current="route().current('events.budget.*') ? 'page' : undefined">Budget</Link>
                 <Link :href="route('events.show', event.id)" :aria-current="route().current('events.show') ? 'page' : undefined">Event details</Link>
                 <Link :href="route('events.people', event.id)" :aria-current="route().current('events.people') ? 'page' : undefined">People &amp; access</Link>
             </nav>

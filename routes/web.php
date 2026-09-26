@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AcceptEventInvitationController;
+use App\Http\Controllers\EventBudgetController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventExpenseController;
 use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\EventMemberController;
 use App\Http\Controllers\EventOverviewController;
@@ -28,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/dashboard', '/events')->name('dashboard');
     Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
     Route::get('/events/{event}/overview', EventOverviewController::class)->name('events.overview');
+    Route::get('/events/{event}/budget', [EventBudgetController::class, 'index'])->name('events.budget.index');
+    Route::patch('/events/{event}/budget', [EventBudgetController::class, 'update'])->name('events.budget.update');
+    Route::resource('events.expenses', EventExpenseController::class)->only(['store', 'update', 'destroy'])->scoped();
     Route::resource('events.tasks', EventTaskController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::resource('events.vendors', EventVendorController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::get('/events/{event}/vendors/compare', EventVendorComparisonController::class)->name('events.vendors.compare');
