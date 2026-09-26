@@ -70,6 +70,12 @@ const copy = async () => {
                         <InputError :message="form.errors.show_date" />
                         <label class="ea-sharing-option"><input v-model="form.show_location" type="checkbox" /><span><strong>Venue &amp; location</strong><small>The location exactly as saved in your event details.</small></span></label>
                         <InputError :message="form.errors.show_location" />
+                        <label class="ea-sharing-option"><input v-model="form.show_progress" type="checkbox" /><span><strong>Planning progress</strong><small>Completed and total task counts only. Task names, notes, dates, and assignees stay private.</small></span></label>
+                        <InputError :message="form.errors.show_progress" />
+                        <label class="ea-sharing-option"><input v-model="form.show_vendors" type="checkbox" /><span><strong>Booked vendors</strong><small>Names and categories of booked vendors only, including future bookings. Contacts, quotes, and notes stay private.</small></span></label>
+                        <InputError :message="form.errors.show_vendors" />
+                        <label class="ea-sharing-option"><input v-model="form.show_budget" type="checkbox" /><span><strong>Budget summary</strong><small>Opt in to share your currency, target, and forecast total. Expense details and payment records stay private.</small></span></label>
+                        <InputError :message="form.errors.show_budget" />
                     </fieldset>
                     <div class="ea-form-field"><label for="public-note">A note for your guests <span>optional</span></label><textarea id="public-note" v-model="form.public_note" rows="4" maxlength="2000" :aria-invalid="Boolean(form.errors.public_note)" aria-describedby="public-note-help public-note-error" /><p id="public-note-help" class="ea-sharing-help">Only this note is shared. Internal workspace notes stay private.</p><InputError id="public-note-error" :message="form.errors.public_note" /></div>
                     <div class="ea-sharing-actions"><button class="ea-button" :disabled="form.processing || publication.processing">{{ form.processing ? 'Saving…' : 'Save sharing choices' }}</button><span v-if="form.isDirty" class="ea-sharing-help" role="status">Unsaved changes</span></div>

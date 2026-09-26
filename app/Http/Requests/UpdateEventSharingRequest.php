@@ -29,6 +29,9 @@ class UpdateEventSharingRequest extends FormRequest
             'show_date' => ['required', 'boolean'],
             'show_location' => ['required', 'boolean'],
             'public_note' => ['present', 'nullable', 'string', 'max:2000'],
+            'show_progress' => ['sometimes', 'boolean'],
+            'show_vendors' => ['sometimes', 'boolean'],
+            'show_budget' => ['sometimes', 'boolean'],
         ];
     }
 }

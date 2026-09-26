@@ -3198,6 +3198,13 @@
 .ea-public-section { padding: 32px 0; border-bottom: 1px solid var(--ea-line); }
 .ea-public-section h2 { font-size: 30px; margin: 0 0 16px; }
 .ea-public-note { white-space: pre-wrap; overflow-wrap: anywhere; }
+.ea-public-vendors { list-style: none; padding: 0; margin: 0; }
+.ea-public-vendors li { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--ea-line); overflow-wrap: anywhere; }
+.ea-public-vendors li:last-child { border: 0; }
+.ea-public-vendors span { color: var(--ea-muted); text-align: right; }
+.ea-public-budget { display: flex; flex-wrap: wrap; gap: 28px 60px; font-variant-numeric: tabular-nums; }
+.ea-public-budget dt { color: var(--ea-muted); font-size: 14px; }
+.ea-public-budget dd { margin: 6px 0 0; font-size: 24px; }
 .ea-public-readonly, .ea-public-footer { font-size: 14px; color: var(--ea-muted); text-align: center; }
 .ea-public-readonly { margin: 28px auto; }
 .ea-public-footer { margin-top: 32px; padding: 24px 0; border-top: 1px solid var(--ea-line); }

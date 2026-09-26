@@ -26,6 +26,9 @@ class EventSharingController extends Controller
                 'show_date' => $share?->show_date ?? false,
                 'show_location' => $share?->show_location ?? false,
                 'public_note' => $share?->public_note ?? '',
+                'show_progress' => $share?->show_progress ?? false,
+                'show_vendors' => $share?->show_vendors ?? false,
+                'show_budget' => $share?->show_budget ?? false,
             ] : null,
             'shareUrl' => $share?->token ? route('shared.show', $share->token) : null,
         ]);

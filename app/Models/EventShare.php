@@ -13,13 +13,13 @@ class EventShare extends Model
     /** @use HasFactory<EventShareFactory> */
     use HasFactory;
 
-    protected $fillable = ['show_date', 'show_location', 'public_note'];
+    protected $fillable = ['show_date', 'show_location', 'public_note', 'show_progress', 'show_vendors', 'show_budget'];
 
     protected $hidden = ['token', 'token_hash'];
 
     protected function casts(): array
     {
-        return ['token' => 'encrypted', 'show_date' => 'boolean', 'show_location' => 'boolean'];
+        return ['token' => 'encrypted', 'show_date' => 'boolean', 'show_location' => 'boolean', 'show_progress' => 'boolean', 'show_vendors' => 'boolean', 'show_budget' => 'boolean'];
     }
 
     public function event(): BelongsTo
