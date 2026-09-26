@@ -39,6 +39,7 @@ class EventPolicyTest extends TestCase
         $this->assertSame($edit, $user->can('editPlanning', $event));
         $this->assertSame($own, $user->can('delete', $event));
         $this->assertSame($own, $user->can('transferOwnership', $event));
+        $this->assertSame($own, $user->can('manageSharing', $event));
         $this->assertSame($own, $user->can('invite', [$event, 'admin']));
         $this->assertSame($manage, $user->can('invite', [$event, 'editor']));
         $this->assertSame($manage, $user->can('invite', [$event, 'viewer']));

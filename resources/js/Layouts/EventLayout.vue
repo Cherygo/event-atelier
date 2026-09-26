@@ -18,6 +18,7 @@ defineProps({ event: { type: Object, required: true } });
                 <Link :href="route('events.budget.index', event.id)" :aria-current="route().current('events.budget.*') ? 'page' : undefined">Budget</Link>
                 <Link :href="route('events.show', event.id)" :aria-current="route().current('events.show') ? 'page' : undefined">Event details</Link>
                 <Link :href="route('events.people', event.id)" :aria-current="route().current('events.people') ? 'page' : undefined">People &amp; access</Link>
+                <Link :href="route('events.sharing.index', event.id)" :aria-current="route().current('events.sharing.*') ? 'page' : undefined">Shared page</Link>
             </nav>
             <slot />
         </div>

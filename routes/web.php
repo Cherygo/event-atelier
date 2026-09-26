@@ -9,11 +9,14 @@ use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\EventMemberController;
 use App\Http\Controllers\EventOverviewController;
 use App\Http\Controllers\EventOwnershipController;
+use App\Http\Controllers\EventSharingController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTaskStatusController;
 use App\Http\Controllers\EventVendorComparisonController;
 use App\Http\Controllers\EventVendorController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SharedEventController;
+use App\Http\Middleware\ProtectSharedPage;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,6 +34,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/dashboard', '/events')->name('dashboard');
     Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
     Route::get('/events/{event}/overview', EventOverviewController::class)->name('events.overview');
+    Route::middleware(ProtectSharedPage::class)->group(function () {
+        Route::get('/events/{event}/sharing', [EventSharingController::class, 'index'])->name('events.sharing.index');
+        Route::patch('/events/{event}/sharing', [EventSharingController::class, 'update'])->name('events.sharing.update');
+        Route::post('/events/{event}/sharing', [EventSharingController::class, 'store'])->middleware('throttle:10,1')->name('events.sharing.store');
+        Route::delete('/events/{event}/sharing', [EventSharingController::class, 'destroy'])->name('events.sharing.destroy');
+    });
     Route::get('/events/{event}/budget', [EventBudgetController::class, 'index'])->name('events.budget.index');
     Route::patch('/events/{event}/budget', [EventBudgetController::class, 'update'])->name('events.budget.update');
     Route::resource('events.expenses', EventExpenseController::class)->only(['store', 'update', 'destroy'])->scoped();
@@ -49,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/invitations/{token}', [AcceptEventInvitationController::class, 'show'])->middleware('throttle:60,1')->name('invitations.show');
+Route::get('/shared/{token}', SharedEventController::class)->middleware([ProtectSharedPage::class, 'throttle:60,1'])->name('shared.show');
 Route::post('/invitations/{token}', [AcceptEventInvitationController::class, 'store'])->middleware(['auth', 'throttle:10,1'])->name('invitations.accept');
 
 Route::middleware('auth')->group(function () {

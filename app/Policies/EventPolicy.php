@@ -35,6 +35,11 @@ class EventPolicy
         return $this->delete($user, $event);
     }
 
+    public function manageSharing(User $user, Event $event): bool
+    {
+        return $event->user_id === $user->id;
+    }
+
     public function manageMembers(User $user, Event $event): bool
     {
         return $this->update($user, $event);
