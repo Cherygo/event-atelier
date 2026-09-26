@@ -85,7 +85,7 @@ class EventExpenseTest extends TestCase
         EventExpense::factory()->for($event)->create(['title' => 'Lunch', 'category' => 'Catering', 'estimated_minor' => 200]);
         EventExpense::factory()->create(['category' => 'Private', 'estimated_minor' => 999999]);
         $this->actingAs($event->user)->get(route('events.budget.index', ['event' => $event, 'search' => 'garden', 'category' => 'Venue', 'page' => 2]))
-            ->assertInertia(fn (Assert $page) => $page->where('expenses.total', 13)->has('expenses.data', 1)->where('estimatedTotal', 1513)->where('categories', ['Catering', 'Venue']));
+            ->assertInertia(fn (Assert $page) => $page->where('expenses.total', 13)->has('expenses.data', 1)->where('budget.totals.estimated_minor', 1513)->where('categories', ['Catering', 'Venue']));
         $this->get(route('events.budget.index', ['event' => $event, 'search' => "%' OR 1=1 --"]))->assertInertia(fn (Assert $page) => $page->where('expenses.total', 0));
     }
 }

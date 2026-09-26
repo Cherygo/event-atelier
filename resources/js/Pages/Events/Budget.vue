@@ -1,15 +1,14 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import EventExpenseEditor from '@/Components/EventExpenseEditor.vue';
 import EventExpensePayments from '@/Components/EventExpensePayments.vue';
 import InputError from '@/Components/InputError.vue';
 import { amountInput, formatBudgetAmount } from '@/budgetFormat';
 
-const props = defineProps({ event: Object, expenses: Object, estimatedTotal: Number, categories: Array, filters: Object, currencies: Array, currencyLocked: Boolean, canEdit: Boolean, today: String });
+const props = defineProps({ event: Object, expenses: Object, budget: Object, categories: Array, filters: Object, currencies: Array, currencyLocked: Boolean, canEdit: Boolean, today: String });
 const money = minor => formatBudgetAmount(minor, props.event.budget_currency);
-const remaining = computed(() => props.event.budget_target_minor === null ? null : props.event.budget_target_minor - props.estimatedTotal);
 const settings = useForm({ currency: props.event.budget_currency ?? '', target: amountInput(props.event.budget_target_minor) });
 const settingsElement = ref(null);
 const saveSettings = () => settings.patch(route('events.budget.update', props.event.id), {
@@ -58,9 +57,25 @@ const remove = expense => removal.delete(route('events.expenses.destroy', [props
             </div>
             <dl v-if="event.budget_currency" class="ea-budget-totals">
                 <div><dt>Budget target</dt><dd>{{ money(event.budget_target_minor) }}</dd></div>
-                <div><dt>Estimated total</dt><dd>{{ money(estimatedTotal) }}</dd></div>
-                <div :class="{ 'ea-budget-over': remaining !== null && remaining < 0 }"><dt>{{ remaining !== null && remaining < 0 ? 'Over target' : 'Left to allocate' }}</dt><dd>{{ money(remaining === null ? null : Math.abs(remaining)) }}</dd></div>
+                <div><dt>Forecast total</dt><dd>{{ money(budget.totals.forecast_minor) }}</dd></div>
+                <div :class="{ 'ea-budget-over': budget.totals.remaining_minor !== null && budget.totals.remaining_minor < 0 }"><dt>{{ budget.totals.remaining_minor !== null && budget.totals.remaining_minor < 0 ? 'Over target' : 'Left to allocate' }}</dt><dd>{{ money(budget.totals.remaining_minor === null ? null : Math.abs(budget.totals.remaining_minor)) }}</dd></div>
             </dl>
+            <div v-if="event.budget_currency" class="ea-budget-context">
+                <p>Forecast uses actual costs where confirmed and estimates for everything else.{{ budget.totals.unconfirmed_count ? ` ${budget.totals.unconfirmed_count} ${budget.totals.unconfirmed_count === 1 ? 'expense still needs its' : 'expenses still need their'} actual cost.` : '' }}</p>
+                <p><strong>{{ money(budget.totals.paid_minor) }}</strong> recorded paid · <strong>{{ money(budget.totals.outstanding_minor) }}</strong> outstanding on confirmed costs<span v-if="budget.totals.overdue_count" class="ea-budget-over"> · {{ budget.totals.overdue_count }} overdue</span></p>
+                <details v-if="budget.categories.length" class="ea-budget-breakdown">
+                    <summary>Category breakdown and totals</summary>
+                    <p id="budget-breakdown-help">Actual and outstanding totals include confirmed costs only. On narrow screens, scroll across the table.</p>
+                    <div class="ea-budget-table-scroll" tabindex="0" role="region" aria-label="Budget by category" aria-describedby="budget-breakdown-help">
+                        <table class="ea-budget-table">
+                            <caption class="sr-only">Budget categories in {{ event.budget_currency }}</caption>
+                            <thead><tr><th scope="col">Category</th><th scope="col">Estimated</th><th scope="col">Actual</th><th scope="col">Paid</th><th scope="col">Outstanding</th></tr></thead>
+                            <tbody><tr v-for="category in budget.categories" :key="category.category"><th scope="row">{{ category.category }}<small v-if="category.unconfirmed_count">{{ category.unconfirmed_count }} unconfirmed</small></th><td>{{ money(category.estimated_minor) }}</td><td>{{ money(category.actual_minor) }}</td><td>{{ money(category.paid_minor) }}</td><td>{{ money(category.outstanding_minor) }}</td></tr></tbody>
+                            <tfoot><tr><th scope="row">All expenses</th><td>{{ money(budget.totals.estimated_minor) }}</td><td>{{ money(budget.totals.actual_minor) }}</td><td>{{ money(budget.totals.paid_minor) }}</td><td>{{ money(budget.totals.outstanding_minor) }}</td></tr></tfoot>
+                        </table>
+                    </div>
+                </details>
+            </div>
             <details v-if="canEdit" ref="settingsElement" class="ea-budget-settings" :open="!event.budget_currency">
                 <summary>{{ event.budget_currency ? 'Budget settings' : 'Set up your budget' }}</summary>
                 <form class="ea-task-editor" @submit.prevent="saveSettings">

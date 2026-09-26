@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\EventBudgetSummary;
 use App\Models\Event;
 use App\TaskStatus;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ use Inertia\Response;
 
 class EventOverviewController extends Controller
 {
-    public function __invoke(Request $request, Event $event): Response
+    public function __invoke(Request $request, Event $event, EventBudgetSummary $summary): Response
     {
         $event->load('members');
         Gate::authorize('view', $event);
@@ -22,7 +23,8 @@ class EventOverviewController extends Controller
         $active = $event->tasks()->where('status', '!=', TaskStatus::Completed);
 
         return Inertia::render('Events/Overview', [
-            'event' => $event->only(['id', 'name', 'location', 'event_date']),
+            'event' => $event->only(['id', 'name', 'location', 'event_date', 'budget_currency', 'budget_target_minor']),
+            'budget' => $event->budget_currency === null ? null : $summary->forEvent($event)['totals'],
             'metrics' => [
                 'total' => $total,
                 'todo' => (int) ($counts[TaskStatus::Todo->value] ?? 0),

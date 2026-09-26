@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BudgetAmount;
+use App\EventBudgetSummary;
 use App\Http\Requests\UpdateEventBudgetRequest;
 use App\Models\Event;
 use App\Models\EventExpense;
@@ -17,7 +18,7 @@ use Inertia\Response;
 
 class EventBudgetController extends Controller
 {
-    public function index(Request $request, Event $event): Response
+    public function index(Request $request, Event $event, EventBudgetSummary $summary): Response
     {
         $event->load('members');
         Gate::authorize('view', $event);
@@ -40,7 +41,7 @@ class EventBudgetController extends Controller
                 ->withSum('payments as paid_minor', 'amount_minor')->latest('id')->paginate(12)->withQueryString()
                 ->through(fn (EventExpense $expense): array => $expense->budgetData()),
             'today' => now()->toDateString(),
-            'estimatedTotal' => (int) $event->expenses()->sum('estimated_minor'),
+            'budget' => $summary->forEvent($event),
             'categories' => $event->expenses()->distinct()->orderBy('category')->pluck('category'),
             'filters' => ['search' => $filters['search'] ?? '', 'category' => $filters['category'] ?? ''],
             'currencies' => BudgetAmount::CURRENCIES,
