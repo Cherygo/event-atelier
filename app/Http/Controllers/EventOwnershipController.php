@@ -30,8 +30,9 @@ class EventOwnershipController extends Controller
             $member->delete();
             $event->members()->create(['user_id' => $previousOwner, 'role' => EventRole::Admin]);
             $event->invitations()->delete();
+            $event->share?->revoke();
         });
 
-        return back()->with('status', 'Ownership transferred. You are now a planner / admin. Pending invitations have been revoked.');
+        return back()->with('status', 'Ownership transferred. You are now a planner / admin. Pending invitations and public sharing links have been revoked.');
     }
 }

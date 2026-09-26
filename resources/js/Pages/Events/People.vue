@@ -67,7 +67,7 @@ const labels = { admin: 'Planner / admin', editor: 'Editor', viewer: 'Viewer' };
         </section>
         <details v-if="can.transferOwnership && members.length" class="ea-event-section ea-sensitive-action">
             <summary>Transfer event ownership</summary>
-            <p>Choose an existing member to become the sole owner. You’ll become a planner / admin. Pending invitations will be revoked so the new owner can review access.</p>
+            <p>Choose an existing member to become the sole owner. You’ll become a planner / admin. Pending invitations and public sharing links will be revoked so the new owner can review access.</p>
             <form class="ea-confirm-form" @submit.prevent="transferOwnership">
                 <div class="ea-form-field"><label for="new-owner">New owner</label><select id="new-owner" v-model="transfer.member_id" required :aria-invalid="Boolean(transfer.errors.member_id)" aria-describedby="new-owner-error"><option value="" disabled>Choose a member</option><option v-for="member in members" :key="member.id" :value="member.id">{{ member.name }}</option></select><InputError id="new-owner-error" :message="transfer.errors.member_id" /></div>
                 <div class="ea-form-field"><label for="owner-password">Your password</label><input id="owner-password" v-model="transfer.password" type="password" autocomplete="current-password" required :aria-invalid="Boolean(transfer.errors.password)" aria-describedby="owner-password-error" /><InputError id="owner-password-error" :message="transfer.errors.password" /></div>

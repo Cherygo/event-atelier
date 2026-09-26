@@ -57,4 +57,21 @@ class EventShareLifecycleTest extends TestCase
         $this->get(route('events.sharing.preview', $foreign))->assertNotFound();
         $this->post(route('events.sharing.rotate', $foreign))->assertNotFound();
     }
+
+    public function test_ownership_transfer_revokes_public_access_and_only_new_owner_can_republish(): void
+    {
+        $member = EventMember::factory()->create();
+        $event = $member->event;
+        $share = EventShare::factory()->for($event)->create(['show_budget' => true]);
+        $share->publish();
+        $oldUrl = route('shared.show', $share->token);
+        $this->actingAs($event->user)->patch(route('events.ownership.update', $event), ['member_id' => $member->id, 'password' => 'password'])->assertRedirect();
+        $this->assertNull($share->fresh()->token_hash);
+        $this->get($oldUrl)->assertNotFound();
+        $this->post(route('events.sharing.store', $event))->assertForbidden();
+        $this->actingAs($member->user)->get(route('events.sharing.index', $event))->assertInertia(fn (Assert $page) => $page->where('canManage', true)->where('shareUrl', null));
+        $this->post(route('events.sharing.store', $event))->assertRedirect();
+        $this->get($oldUrl)->assertNotFound();
+        $this->get(route('shared.show', $share->fresh()->token))->assertOk();
+    }
 }
