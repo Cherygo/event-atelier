@@ -12,6 +12,8 @@ const form = useForm({
     title: props.expense?.title ?? '',
     category: props.expense?.category ?? '',
     estimate: amountInput(props.expense?.estimated_minor),
+    actual: amountInput(props.expense?.actual_minor),
+    due_date: props.expense?.due_date ?? '',
     currency: props.event.budget_currency,
     notes: props.expense?.notes ?? '',
 });
@@ -44,6 +46,17 @@ const save = () => {
             <label :for="prefix + '-estimate'">Estimated cost · {{ event.budget_currency }}</label>
             <input :id="prefix + '-estimate'" v-model="form.estimate" type="number" inputmode="decimal" min="0" max="999999999.99" step="0.01" required :aria-invalid="Boolean(form.errors.estimate)" :aria-describedby="prefix + '-estimate-error'" />
             <InputError :id="prefix + '-estimate-error'" :message="form.errors.estimate" />
+        </div>
+        <div class="ea-form-field">
+            <label :for="prefix + '-actual'">Actual cost · {{ event.budget_currency }} <span>Optional</span></label>
+            <input :id="prefix + '-actual'" v-model="form.actual" type="number" inputmode="decimal" min="0" max="999999999.99" step="0.01" placeholder="Not confirmed" :aria-invalid="Boolean(form.errors.actual)" :aria-describedby="prefix + '-actual-error ' + prefix + '-actual-help'" />
+            <InputError :id="prefix + '-actual-error'" :message="form.errors.actual" />
+            <p :id="prefix + '-actual-help'" class="ea-vendor-field-help">The agreed total, including taxes. Leave blank until known; enter 0 only when there is no cost.</p>
+        </div>
+        <div class="ea-form-field">
+            <label :for="prefix + '-due'">Payment due date <span>Optional</span></label>
+            <input :id="prefix + '-due'" v-model="form.due_date" type="date" :aria-invalid="Boolean(form.errors.due_date)" :aria-describedby="prefix + '-due-error'" />
+            <InputError :id="prefix + '-due-error'" :message="form.errors.due_date" />
         </div>
         <div class="ea-form-field ea-form-field-wide">
             <label :for="prefix + '-notes'">Notes <span>Optional</span></label>

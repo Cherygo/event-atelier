@@ -31,6 +31,8 @@ class SaveEventExpenseRequest extends FormRequest
             'title' => ['required', 'string', 'max:180'],
             'category' => ['required', 'string', 'max:60'],
             'estimate' => ['required', 'regex:'.BudgetAmount::PATTERN],
+            'actual' => ['sometimes', 'nullable', 'regex:'.BudgetAmount::PATTERN],
+            'due_date' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
             'currency' => ['required', Rule::in(BudgetAmount::CURRENCIES)],
             'notes' => ['nullable', 'string', 'max:5000'],
         ];
@@ -38,6 +40,9 @@ class SaveEventExpenseRequest extends FormRequest
 
     public function messages(): array
     {
-        return ['estimate.regex' => 'Enter an estimate up to 999999999.99 with at most two decimal places.'];
+        return [
+            'estimate.regex' => 'Enter an estimate up to 999999999.99 with at most two decimal places.',
+            'actual.regex' => 'Enter an actual cost up to 999999999.99 with at most two decimal places.',
+        ];
     }
 }

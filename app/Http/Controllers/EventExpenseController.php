@@ -47,7 +47,7 @@ class EventExpenseController extends Controller
         return to_route('events.budget.index', $event)->with('status', 'Expense deleted.');
     }
 
-    /** @return array{title: string, category: string, estimated_minor: int, notes: ?string} */
+    /** @return array{title: string, category: string, estimated_minor: int, notes: ?string, actual_minor?: ?int, due_date?: ?string} */
     private function expenseData(SaveEventExpenseRequest $request, Event $event): array
     {
         $data = $request->validated();
@@ -55,9 +55,17 @@ class EventExpenseController extends Controller
             throw ValidationException::withMessages(['currency' => 'Set the budget currency first, then reload this page before saving an expense.']);
         }
 
-        return [
+        $attributes = [
             'title' => $data['title'], 'category' => $data['category'],
             'estimated_minor' => BudgetAmount::toMinor((string) $data['estimate']), 'notes' => $data['notes'] ?? null,
         ];
+        if (array_key_exists('actual', $data)) {
+            $attributes['actual_minor'] = $data['actual'] === null ? null : BudgetAmount::toMinor((string) $data['actual']);
+        }
+        if (array_key_exists('due_date', $data)) {
+            $attributes['due_date'] = $data['due_date'];
+        }
+
+        return $attributes;
     }
 }

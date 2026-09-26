@@ -12,11 +12,11 @@ class EventExpense extends Model
     /** @use HasFactory<EventExpenseFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'category', 'estimated_minor', 'notes'];
+    protected $fillable = ['title', 'category', 'estimated_minor', 'actual_minor', 'due_date', 'notes'];
 
     protected function casts(): array
     {
-        return ['estimated_minor' => 'integer'];
+        return ['estimated_minor' => 'integer', 'actual_minor' => 'integer', 'due_date' => 'date:Y-m-d'];
     }
 
     public function event(): BelongsTo

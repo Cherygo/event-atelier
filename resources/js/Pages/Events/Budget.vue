@@ -92,9 +92,10 @@ const remove = expense => removal.delete(route('events.expenses.destroy', [props
                         <template v-else>
                             <div class="ea-expense-heading">
                                 <div class="ea-expense-name"><h3>{{ expense.title }}</h3><span>{{ expense.category }}</span></div>
-                                <dl class="ea-expense-amounts"><div><dt>Estimated</dt><dd>{{ money(expense.estimated_minor) }}</dd></div></dl>
+                                <dl class="ea-expense-amounts"><div><dt>Estimated</dt><dd>{{ money(expense.estimated_minor) }}</dd></div><div><dt>Actual</dt><dd>{{ expense.actual_minor === null ? 'Not confirmed' : money(expense.actual_minor) }}</dd></div></dl>
                                 <div v-if="canEdit" class="ea-task-actions"><button :id="'edit-expense-' + expense.id" class="ea-text-link" :aria-label="'Edit ' + expense.title" @click="openEditor(expense)">Edit</button><button class="ea-text-link ea-danger-link" :aria-label="'Delete ' + expense.title" @click="deleting = expense.id; removal.clearErrors()">Delete</button></div>
                             </div>
+                            <p v-if="expense.due_date" class="ea-budget-caption">Payment due <time :datetime="expense.due_date">{{ new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(expense.due_date + 'T12:00:00')) }}</time></p>
                             <details v-if="expense.notes" class="ea-expense-notes"><summary>Notes</summary><p>{{ expense.notes }}</p></details>
                             <div v-if="deleting === expense.id" class="ea-task-delete-confirm">
                                 <p>Delete “{{ expense.title }}”? This cannot be undone.</p>
