@@ -7,7 +7,7 @@ import InputError from '@/Components/InputError.vue';
 const props = defineProps({ event: Object, canManage: Boolean, settings: Object, shareUrl: String });
 const form = useForm({ ...props.settings });
 const publication = useForm({});
-const confirmingStop = ref(false);
+const confirmation = ref(null);
 const copyStatus = ref('');
 const linkInput = ref(null);
 watch(() => props.shareUrl, () => { copyStatus.value = ''; });
@@ -18,7 +18,11 @@ const save = () => form.patch(route('events.sharing.update', props.event.id), {
 const publish = () => publication.post(route('events.sharing.store', props.event.id), { preserveScroll: true });
 const stop = () => publication.delete(route('events.sharing.destroy', props.event.id), {
     preserveScroll: true,
-    onSuccess: () => { confirmingStop.value = false; },
+    onSuccess: () => { confirmation.value = null; },
+});
+const rotate = () => publication.post(route('events.sharing.rotate', props.event.id), {
+    preserveScroll: true,
+    onSuccess: () => { confirmation.value = null; },
 });
 const copy = async () => {
     try {
@@ -49,16 +53,19 @@ const copy = async () => {
                     <div class="ea-sharing-actions">
                         <button type="button" class="ea-button" @click="copy">Copy link</button>
                         <a :href="shareUrl" target="_blank" rel="noopener noreferrer" class="ea-button ea-button-outline">Open page <span class="sr-only">in a new tab</span></a>
-                        <button type="button" class="ea-text-link" :disabled="publication.processing" @click="confirmingStop = !confirmingStop" :aria-expanded="confirmingStop">Stop sharing</button>
+                        <button type="button" class="ea-text-link" :disabled="publication.processing" @click="confirmation = confirmation === 'rotate' ? null : 'rotate'" :aria-expanded="confirmation === 'rotate'">Replace link</button>
+                        <button type="button" class="ea-text-link" :disabled="publication.processing" @click="confirmation = confirmation === 'stop' ? null : 'stop'" :aria-expanded="confirmation === 'stop'">Stop sharing</button>
                     </div>
                     <p class="ea-sharing-feedback" role="status">{{ copyStatus }}</p>
-                    <div v-if="confirmingStop" class="ea-sharing-confirm">
-                        <p>The current link will stop working. Visitors may still have copies they saved earlier.</p>
-                        <div class="ea-sharing-actions"><button type="button" class="ea-button" :disabled="publication.processing" @click="stop">{{ publication.processing ? 'Stopping…' : 'Confirm stop sharing' }}</button><button type="button" class="ea-text-link" :disabled="publication.processing" @click="confirmingStop = false">Keep sharing</button></div>
-                    </div>
+                    <Transition name="ea-sharing-reveal">
+                        <div v-if="confirmation" :key="confirmation" class="ea-sharing-confirm">
+                            <p>{{ confirmation === 'stop' ? 'The current link will stop working. Visitors may still have copies they saved earlier.' : 'Replace this link? The old one will stop working immediately. You’ll need to send the new link to your guests.' }}</p>
+                            <div class="ea-sharing-actions"><button type="button" class="ea-button" :disabled="publication.processing" @click="confirmation === 'stop' ? stop() : rotate()">{{ publication.processing ? 'Updating…' : confirmation === 'stop' ? 'Confirm stop sharing' : 'Confirm replace link' }}</button><button type="button" class="ea-text-link" :disabled="publication.processing" @click="confirmation = null">Cancel</button></div>
+                        </div>
+                    </Transition>
                 </template>
                 <button v-else type="button" class="ea-button" :disabled="publication.processing || form.processing || form.isDirty" @click="publish">{{ publication.processing ? 'Publishing…' : 'Publish shared page' }}</button>
-                <p v-if="form.isDirty" class="ea-sharing-help">You have unsaved choices. Save them before publishing.</p>
+                <p v-if="form.isDirty" class="ea-sharing-help">You have unsaved choices. Save them before publishing or previewing.</p>
             </section>
             <section class="ea-event-section" aria-labelledby="sharing-choices-heading">
                 <h2 id="sharing-choices-heading">Choose what to share</h2>
@@ -78,7 +85,7 @@ const copy = async () => {
                         <InputError :message="form.errors.show_budget" />
                     </fieldset>
                     <div class="ea-form-field"><label for="public-note">A note for your guests <span>optional</span></label><textarea id="public-note" v-model="form.public_note" rows="4" maxlength="2000" :aria-invalid="Boolean(form.errors.public_note)" aria-describedby="public-note-help public-note-error" /><p id="public-note-help" class="ea-sharing-help">Only this note is shared. Internal workspace notes stay private.</p><InputError id="public-note-error" :message="form.errors.public_note" /></div>
-                    <div class="ea-sharing-actions"><button class="ea-button" :disabled="form.processing || publication.processing">{{ form.processing ? 'Saving…' : 'Save sharing choices' }}</button><span v-if="form.isDirty" class="ea-sharing-help" role="status">Unsaved changes</span></div>
+                    <div class="ea-sharing-actions"><button class="ea-button" :disabled="form.processing || publication.processing">{{ form.processing ? 'Saving…' : 'Save sharing choices' }}</button><a :href="route('events.sharing.preview', event.id)" target="_blank" rel="noopener noreferrer" class="ea-button ea-button-outline">Preview saved page <span class="sr-only">in a new tab</span></a><span v-if="form.isDirty" class="ea-sharing-help" role="status">Unsaved changes — preview shows saved choices</span></div>
                 </form>
             </section>
             <p class="ea-sharing-help ea-sharing-boundary">A shared link does not grant workspace access. Invite collaborators through People &amp; access instead.</p>

@@ -9,6 +9,7 @@ use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\EventMemberController;
 use App\Http\Controllers\EventOverviewController;
 use App\Http\Controllers\EventOwnershipController;
+use App\Http\Controllers\EventSharePreviewController;
 use App\Http\Controllers\EventSharingController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTaskStatusController;
@@ -36,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/events/{event}/overview', EventOverviewController::class)->name('events.overview');
     Route::middleware(ProtectSharedPage::class)->group(function () {
         Route::get('/events/{event}/sharing', [EventSharingController::class, 'index'])->name('events.sharing.index');
+        Route::get('/events/{event}/sharing/preview', EventSharePreviewController::class)->name('events.sharing.preview');
+        Route::post('/events/{event}/sharing/replace-link', [EventSharingController::class, 'rotate'])->middleware('throttle:10,1')->name('events.sharing.rotate');
         Route::patch('/events/{event}/sharing', [EventSharingController::class, 'update'])->name('events.sharing.update');
         Route::post('/events/{event}/sharing', [EventSharingController::class, 'store'])->middleware('throttle:10,1')->name('events.sharing.store');
         Route::delete('/events/{event}/sharing', [EventSharingController::class, 'destroy'])->name('events.sharing.destroy');

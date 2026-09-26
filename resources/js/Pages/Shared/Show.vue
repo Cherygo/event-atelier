@@ -4,7 +4,7 @@ import AtelierBrand from '@/Components/AtelierBrand.vue';
 import SharedEventContent from '@/Components/SharedEventContent.vue';
 import '@/../css/atelier.css';
 
-defineProps({ plan: { type: Object, default: null } });
+defineProps({ plan: { type: Object, default: null }, backUrl: { type: String, default: null } });
 </script>
 
 <template>
@@ -14,6 +14,7 @@ defineProps({ plan: { type: Object, default: null } });
             <meta name="referrer" content="no-referrer" />
         </Head>
         <header class="ea-public-brand"><AtelierBrand /></header>
+        <aside v-if="backUrl" class="ea-public-preview"><p><strong>Owner preview</strong> · This shows your saved choices, not unsaved edits. Opening this preview does not publish the page.</p><a :href="backUrl" class="ea-text-link">Back to sharing settings</a></aside>
         <main>
             <SharedEventContent v-if="plan" :plan="plan" />
             <section v-else class="ea-public-unavailable">

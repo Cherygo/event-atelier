@@ -73,4 +73,19 @@ class EventSharingController extends Controller
 
         return to_route('events.sharing.index', $event)->with('status', 'Sharing stopped. The old link no longer opens this event. Copies already saved by visitors cannot be recalled.');
     }
+
+    public function rotate(Event $event): RedirectResponse
+    {
+        Gate::authorize('view', $event);
+        Gate::authorize('manageSharing', $event);
+        DB::transaction(function () use ($event): void {
+            $event = Event::query()->lockForUpdate()->findOrFail($event->id);
+            Gate::authorize('manageSharing', $event);
+            $share = $event->share;
+            abort_unless($share?->token_hash, 409, 'Publish the page before replacing its link.');
+            $share->publish();
+        });
+
+        return to_route('events.sharing.index', $event)->with('status', 'Link replaced. The previous link no longer works. Send the new link to anyone who should keep access.');
+    }
 }
