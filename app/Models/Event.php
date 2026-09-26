@@ -38,6 +38,7 @@ class Event extends Model
         return [
             'event_date' => 'date',
             'guest_count' => 'integer',
+            'budget_target_minor' => 'integer',
         ];
     }
 
@@ -59,6 +60,11 @@ class Event extends Model
     public function vendors(): HasMany
     {
         return $this->hasMany(EventVendor::class);
+    }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(EventExpense::class);
     }
 
     public function assignableUsers(): Builder

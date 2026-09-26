@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EventFactory extends Factory
 {
+    public function withBudget(): static
+    {
+        return $this->state(fn (): array => ['budget_currency' => 'EUR', 'budget_target_minor' => 2500000]);
+    }
+
     /**
      * Define the model's default state.
      *
