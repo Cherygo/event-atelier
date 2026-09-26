@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\BudgetAmount;
 use App\Http\Requests\UpdateEventBudgetRequest;
 use App\Models\Event;
+use App\Models\EventExpense;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +36,10 @@ class EventBudgetController extends Controller
 
         return Inertia::render('Events/Budget', [
             'event' => $event->only(['id', 'name', 'budget_currency', 'budget_target_minor']),
-            'expenses' => $expenses->latest('id')->paginate(12)->withQueryString(),
+            'expenses' => $expenses->with(['payments' => fn (HasMany $query): HasMany => $query->orderByDesc('paid_on')->orderByDesc('id')])
+                ->withSum('payments as paid_minor', 'amount_minor')->latest('id')->paginate(12)->withQueryString()
+                ->through(fn (EventExpense $expense): array => $expense->budgetData()),
+            'today' => now()->toDateString(),
             'estimatedTotal' => (int) $event->expenses()->sum('estimated_minor'),
             'categories' => $event->expenses()->distinct()->orderBy('category')->pluck('category'),
             'filters' => ['search' => $filters['search'] ?? '', 'category' => $filters['category'] ?? ''],

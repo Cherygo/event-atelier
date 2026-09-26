@@ -29,7 +29,13 @@ class EventExpenseController extends Controller
         DB::transaction(function () use ($request, $event, $expense): void {
             $event = Event::query()->lockForUpdate()->findOrFail($event->id);
             Gate::authorize('editPlanning', $event);
-            $event->expenses()->findOrFail($expense->id)->update($this->expenseData($request, $event));
+            $expense = $event->expenses()->findOrFail($expense->id);
+            $attributes = $this->expenseData($request, $event);
+            $paid = (int) $expense->payments()->sum('amount_minor');
+            if (array_key_exists('actual_minor', $attributes) && $paid > 0 && ($attributes['actual_minor'] === null || $attributes['actual_minor'] < $paid)) {
+                throw ValidationException::withMessages(['actual' => 'The actual cost cannot be less than recorded payments. Correct the payment records first.']);
+            }
+            $expense->update($attributes);
         });
 
         return back()->with('status', 'Expense saved.');
@@ -41,7 +47,11 @@ class EventExpenseController extends Controller
         DB::transaction(function () use ($event, $expense): void {
             $event = Event::query()->lockForUpdate()->findOrFail($event->id);
             Gate::authorize('editPlanning', $event);
-            $event->expenses()->findOrFail($expense->id)->delete();
+            $expense = $event->expenses()->findOrFail($expense->id);
+            if ($expense->payments()->exists()) {
+                throw ValidationException::withMessages(['expense' => 'This expense has recorded payments. Remove those records first if you need to delete it.']);
+            }
+            $expense->delete();
         });
 
         return to_route('events.budget.index', $event)->with('status', 'Expense deleted.');

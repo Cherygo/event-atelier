@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EventExpenseFactory extends Factory
 {
+    public function withActualCost(): static
+    {
+        return $this->state(fn (): array => ['actual_minor' => 100000]);
+    }
+
     /**
      * Define the model's default state.
      *

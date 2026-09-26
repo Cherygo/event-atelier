@@ -3,10 +3,11 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed, nextTick, ref, watch } from 'vue';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import EventExpenseEditor from '@/Components/EventExpenseEditor.vue';
+import EventExpensePayments from '@/Components/EventExpensePayments.vue';
 import InputError from '@/Components/InputError.vue';
 import { amountInput, formatBudgetAmount } from '@/budgetFormat';
 
-const props = defineProps({ event: Object, expenses: Object, estimatedTotal: Number, categories: Array, filters: Object, currencies: Array, currencyLocked: Boolean, canEdit: Boolean });
+const props = defineProps({ event: Object, expenses: Object, estimatedTotal: Number, categories: Array, filters: Object, currencies: Array, currencyLocked: Boolean, canEdit: Boolean, today: String });
 const money = minor => formatBudgetAmount(minor, props.event.budget_currency);
 const remaining = computed(() => props.event.budget_target_minor === null ? null : props.event.budget_target_minor - props.estimatedTotal);
 const settings = useForm({ currency: props.event.budget_currency ?? '', target: amountInput(props.event.budget_target_minor) });
@@ -95,10 +96,12 @@ const remove = expense => removal.delete(route('events.expenses.destroy', [props
                                 <dl class="ea-expense-amounts"><div><dt>Estimated</dt><dd>{{ money(expense.estimated_minor) }}</dd></div><div><dt>Actual</dt><dd>{{ expense.actual_minor === null ? 'Not confirmed' : money(expense.actual_minor) }}</dd></div></dl>
                                 <div v-if="canEdit" class="ea-task-actions"><button :id="'edit-expense-' + expense.id" class="ea-text-link" :aria-label="'Edit ' + expense.title" @click="openEditor(expense)">Edit</button><button class="ea-text-link ea-danger-link" :aria-label="'Delete ' + expense.title" @click="deleting = expense.id; removal.clearErrors()">Delete</button></div>
                             </div>
-                            <p v-if="expense.due_date" class="ea-budget-caption">Payment due <time :datetime="expense.due_date">{{ new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(expense.due_date + 'T12:00:00')) }}</time></p>
+                            <div class="ea-expense-status"><span class="ea-tag" :class="{ 'ea-tag-rose': expense.overdue, 'ea-tag-done': expense.payment_status === 'Paid' || expense.payment_status === 'No cost' }">{{ expense.overdue ? 'Overdue · ' : '' }}{{ expense.payment_status }}</span><span v-if="expense.due_date">Due <time :datetime="expense.due_date">{{ new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(expense.due_date + 'T12:00:00')) }}</time></span></div>
+                            <EventExpensePayments :event="event" :expense="expense" :can-edit="canEdit" :today="today" />
                             <details v-if="expense.notes" class="ea-expense-notes"><summary>Notes</summary><p>{{ expense.notes }}</p></details>
                             <div v-if="deleting === expense.id" class="ea-task-delete-confirm">
                                 <p>Delete “{{ expense.title }}”? This cannot be undone.</p>
+                                <InputError :message="removal.errors.expense" role="alert" />
                                 <button class="ea-button ea-button-outline" :disabled="removal.processing" @click="remove(expense)">{{ removal.processing ? 'Deleting…' : 'Delete expense' }}</button>
                                 <button class="ea-text-link" :disabled="removal.processing" @click="deleting = null">Keep expense</button>
                             </div>

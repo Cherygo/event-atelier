@@ -2979,6 +2979,22 @@
 .ea-expense-amounts dd { margin: 5px 0 0; font-variant-numeric: tabular-nums; }
 .ea-expense-notes { margin-top: 12px; color: var(--ea-muted); font-size: 14px; }
 .ea-expense-notes p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.ea-expense-status { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 16px; font-size: 14px; color: var(--ea-muted); }
+.ea-expense-payments { margin-top: 12px; }
+.ea-expense-payments summary { font-weight: 600; }
+.ea-expense-payments summary span { margin-left: 12px; font-weight: 400; font-size: 14px; color: var(--ea-muted); }
+.ea-payment-detail { padding-block: 12px; }
+.ea-payment-balance { display: flex; flex-wrap: wrap; gap: 16px 40px; margin: 0; }
+.ea-payment-balance dt { color: var(--ea-muted); font-size: 14px; }
+.ea-payment-balance dd { margin: 4px 0 0; font-variant-numeric: tabular-nums; font-size: 20px; }
+.ea-payment-history { list-style: none; margin: 16px 0; padding: 0; }
+.ea-payment-history > li { padding-block: 14px; border-top: 1px solid var(--ea-line); }
+.ea-payment-history-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+.ea-payment-history-row strong { font-variant-numeric: tabular-nums; }
+.ea-payment-note { margin: 8px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ea-muted); }
+.ea-payment-enter-active, .ea-payment-leave-active { transition: opacity .18s var(--ea-ease-out), background-color .18s var(--ea-ease-out); }
+.ea-payment-enter-from, .ea-payment-leave-to { opacity: .5; background-color: var(--ea-sage); }
+.ea-budget-ledger :is(summary, select, textarea):focus-visible { outline: 3px solid #987249; outline-offset: 4px; }
 @media (max-width: 700px) {
     .ea-budget-totals { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
     .ea-budget-totals > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }

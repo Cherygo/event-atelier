@@ -4,6 +4,7 @@ use App\Http\Controllers\AcceptEventInvitationController;
 use App\Http\Controllers\EventBudgetController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventExpenseController;
+use App\Http\Controllers\EventExpensePaymentController;
 use App\Http\Controllers\EventInvitationController;
 use App\Http\Controllers\EventMemberController;
 use App\Http\Controllers\EventOverviewController;
@@ -33,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/events/{event}/budget', [EventBudgetController::class, 'index'])->name('events.budget.index');
     Route::patch('/events/{event}/budget', [EventBudgetController::class, 'update'])->name('events.budget.update');
     Route::resource('events.expenses', EventExpenseController::class)->only(['store', 'update', 'destroy'])->scoped();
+    Route::post('/events/{event}/expenses/{expense}/payments', [EventExpensePaymentController::class, 'store'])->scopeBindings()->name('events.expenses.payments.store');
+    Route::delete('/events/{event}/expenses/{expense}/payments/{payment}', [EventExpensePaymentController::class, 'destroy'])->scopeBindings()->name('events.expenses.payments.destroy');
     Route::resource('events.tasks', EventTaskController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::resource('events.vendors', EventVendorController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::get('/events/{event}/vendors/compare', EventVendorComparisonController::class)->name('events.vendors.compare');
