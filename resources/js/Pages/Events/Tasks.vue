@@ -41,7 +41,7 @@ const imported = async () => { choosingTemplate.value = false; await focusList()
                     <button v-if="!adding" ref="addButton" type="button" class="ea-button" :disabled="choosingTemplate" @click="openEditor">Add task</button>
                 </div>
             </div>
-            <Transition name="ea-template"><EventTaskTemplates v-if="choosingTemplate" :event="event" :templates="templates" :existing-keys="templateKeys" @saved="imported" @cancel="closeTemplates" /></Transition>
+            <Transition name="ea-template"><EventTaskTemplates v-if="choosingTemplate" :event="event" :templates="templates" :existing-keys="templateKeys" :today="today" @saved="imported" @cancel="closeTemplates" /></Transition>
             <EventTaskEditor v-if="adding" :event-id="event.id" :assignees="assignees" @saved="closeEditor" @cancel="closeEditor" />
             <div class="ea-task-status-filters" role="group" aria-label="Filter tasks by status">
                 <button v-for="(label, value) in statuses" :key="value" type="button" :aria-pressed="filters.status === value" :disabled="search.processing" @click="search.status = value; applyFilters()">{{ label }}</button>

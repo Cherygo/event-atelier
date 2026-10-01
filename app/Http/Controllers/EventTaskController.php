@@ -54,8 +54,8 @@ class EventTaskController extends Controller
         }
 
         return Inertia::render('Events/Tasks', [
-            'event' => $event->only(['id', 'name', 'type', 'event_date']),
-            'templates' => $request->user()->can('editPlanning', $event) ? $catalog->all() : [],
+            'event' => [...$event->only(['id', 'name', 'type']), 'event_date' => $event->event_date?->toDateString()],
+            'templates' => $request->user()->can('editPlanning', $event) ? $catalog->withSuggestedDates($event->event_date, today()) : [],
             'templateKeys' => $request->user()->can('editPlanning', $event) ? $event->tasks()->whereNotNull('template_key')->pluck('template_key') : [],
             'tasks' => $tasks->latest('id')->paginate(20)->withQueryString(),
             'filters' => ['search' => $filters['search'] ?? '', 'status' => $status, 'due' => $due, 'sort' => $sort],

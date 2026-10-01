@@ -34,6 +34,9 @@ class ImportTaskTemplateRequest extends FormRequest
             'template' => ['required', 'string', Rule::in(array_column($catalog->all(), 'key'))],
             'items' => ['required', 'array', 'min:1', 'max:30'],
             'items.*' => ['required', 'string', 'distinct:strict', Rule::in(array_column($template['items'] ?? [], 'key'))],
+            'include_due_dates' => ['sometimes', 'boolean'],
+            'event_date' => ['nullable', 'date_format:Y-m-d'],
+            'preview_today' => ['nullable', 'date_format:Y-m-d'],
         ];
     }
 

@@ -3180,6 +3180,11 @@
 .ea-template-selection, .ea-template-selection > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
 .ea-template-selection { justify-content: space-between; font-size: 14px; padding: 8px 0; }
 .ea-template-list { border: 0; padding: 0; margin: 0; }
+.ea-template-dates { margin-block: 20px; }
+.ea-template-dates label { display: flex; gap: 12px; align-items: center; cursor: pointer; }
+.ea-template-dates input { width: 20px; height: 20px; flex-shrink: 0; color: var(--ea-forest); border-color: var(--ea-muted); border-radius: 3px; }
+.ea-template-dates p { color: var(--ea-muted); font-size: 14px; margin: 8px 0 0; }
+.ea-template-due { margin: 8px 0 0; padding-left: 32px; color: var(--ea-muted); font-size: 14px; }
 .ea-template-row { padding: 16px 0; border-top: 1px solid #c8cfbc; }
 .ea-template-row label { display: flex; align-items: start; gap: 12px; cursor: pointer; }
 .ea-template-row input { width: 20px; height: 20px; flex-shrink: 0; margin-top: 3px; color: var(--ea-forest); border-color: var(--ea-muted); border-radius: 3px; }

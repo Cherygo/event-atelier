@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\CarbonInterface;
+
 class TaskTemplateCatalog
 {
     private const ITEMS = [
@@ -47,5 +49,24 @@ class TaskTemplateCatalog
         }
 
         return null;
+    }
+
+    public function suggestedDueDate(?CarbonInterface $eventDate, int $daysBefore, CarbonInterface $today): ?string
+    {
+        $date = $eventDate?->copy()->subDays($daysBefore)->toDateString();
+
+        return $date !== null && $date >= $today->toDateString() ? $date : null;
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function withSuggestedDates(?CarbonInterface $eventDate, CarbonInterface $today): array
+    {
+        return array_map(function (array $template) use ($eventDate, $today): array {
+            $template['items'] = array_map(fn (array $item): array => [
+                ...$item, 'due_date' => $this->suggestedDueDate($eventDate, $item['days_before'], $today),
+            ], $template['items']);
+
+            return $template;
+        }, $this->all());
     }
 }
