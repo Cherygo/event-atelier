@@ -3171,6 +3171,30 @@
 .ea-task-saving { color: var(--ea-muted); font-size: 14px; }
 .ea-app-stage > main { display: flow-root; }
 .ea-app-feedback { max-width: 1080px; margin: 24px 6% 0; padding: 14px 18px; background: var(--ea-sage); border: 1px solid var(--ea-line); border-radius: 4px; }
+.ea-template-panel { padding: 24px; margin-bottom: 28px; background: var(--ea-sage); border-radius: 8px; }
+.ea-template-panel > .ea-task-toolbar { flex-wrap: wrap; margin-bottom: 12px; }
+.ea-template-panel h3 { font: 400 29px/1.15 var(--ea-display); margin: 0; }
+.ea-template-panel > p, .ea-template-picker p { color: var(--ea-muted); margin: 12px 0 22px; }
+.ea-template-picker { max-width: 560px; }
+.ea-template-picker p, .ea-template-help { font-size: 14px; }
+.ea-template-selection, .ea-template-selection > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+.ea-template-selection { justify-content: space-between; font-size: 14px; padding: 8px 0; }
+.ea-template-list { border: 0; padding: 0; margin: 0; }
+.ea-template-row { padding: 16px 0; border-top: 1px solid #c8cfbc; }
+.ea-template-row label { display: flex; align-items: start; gap: 12px; cursor: pointer; }
+.ea-template-row input { width: 20px; height: 20px; flex-shrink: 0; margin-top: 3px; color: var(--ea-forest); border-color: var(--ea-muted); border-radius: 3px; }
+.ea-template-row strong, .ea-template-row small { display: block; }
+.ea-template-row small { color: var(--ea-muted); font-size: 14px; margin-top: 3px; }
+.ea-template-row details { padding-left: 32px; margin-top: 8px; color: var(--ea-muted); font-size: 14px; }
+.ea-template-row summary { cursor: pointer; padding-block: 5px; }
+.ea-template-row details p { margin: 8px 0 0; }
+.ea-template-row :is(input, summary):focus-visible { outline: 3px solid #987249; outline-offset: 4px; }
+.ea-template-panel .ea-task-editor-actions { flex-wrap: wrap; }
+.ea-template-enter-active, .ea-template-leave-active { transition: opacity .18s var(--ea-ease-out), transform .18s var(--ea-ease-out); }
+.ea-template-enter-from, .ea-template-leave-to { opacity: 0; transform: translateY(-5px); }
+@media (max-width: 640px) { .ea-template-panel { padding: 20px 16px; }.ea-template-panel .ea-task-editor-actions { align-items: stretch; flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .ea-template-enter-active, .ea-template-leave-active { transition: none; } }
+
 .ea-sharing-title, .ea-sharing-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
 .ea-sharing-title { margin-bottom: 14px; }
 .ea-sharing-title h2 { margin: 0; }

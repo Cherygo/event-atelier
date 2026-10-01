@@ -4,8 +4,11 @@ import { nextTick, ref, watch } from 'vue';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import EventTaskEditor from '@/Components/EventTaskEditor.vue';
 import EventTaskRow from '@/Components/EventTaskRow.vue';
+import EventTaskTemplates from '@/Components/EventTaskTemplates.vue';
 
-const props = defineProps({ event: Object, tasks: Object, filters: Object, canEdit: Boolean, today: String, assignees: Array });
+const props = defineProps({ event: Object, tasks: Object, filters: Object, canEdit: Boolean, today: String, assignees: Array, templates: Array, templateKeys: Array });
+const choosingTemplate = ref(false);
+const templateButton = ref(null);
 const adding = ref(false);
 const addButton = ref(null);
 const heading = ref(null);
@@ -21,6 +24,9 @@ const applyFilters = () => search.get(route('events.tasks.index', props.event.id
 const openEditor = async () => { adding.value = true; await nextTick(); document.getElementById('task-new-title')?.focus(); };
 const closeEditor = async () => { adding.value = false; await nextTick(); addButton.value?.focus(); };
 const focusList = async () => { await nextTick(); heading.value?.focus(); };
+const openTemplates = async () => { choosingTemplate.value = true; await nextTick(); document.getElementById('task-template')?.focus(); };
+const closeTemplates = async () => { choosingTemplate.value = false; await nextTick(); templateButton.value?.focus(); };
+const imported = async () => { choosingTemplate.value = false; await focusList(); };
 </script>
 
 <template>
@@ -30,8 +36,12 @@ const focusList = async () => { await nextTick(); heading.value?.focus(); };
         <section class="ea-event-section" aria-labelledby="task-list-heading">
             <div class="ea-task-toolbar">
                 <div><h2 id="task-list-heading" ref="heading" tabindex="-1">Tasks <span class="ea-section-count">{{ tasks.total }}</span></h2><p v-if="!canEdit" class="ea-task-readonly">You have read-only access to this plan.</p></div>
-                <button v-if="canEdit && !adding" ref="addButton" type="button" class="ea-button" @click="openEditor">Add task</button>
+                <div v-if="canEdit" class="ea-task-editor-actions">
+                    <button v-if="!choosingTemplate" ref="templateButton" type="button" class="ea-button ea-button-outline" :disabled="adding" @click="openTemplates">Use a template</button>
+                    <button v-if="!adding" ref="addButton" type="button" class="ea-button" :disabled="choosingTemplate" @click="openEditor">Add task</button>
+                </div>
             </div>
+            <Transition name="ea-template"><EventTaskTemplates v-if="choosingTemplate" :event="event" :templates="templates" :existing-keys="templateKeys" @saved="imported" @cancel="closeTemplates" /></Transition>
             <EventTaskEditor v-if="adding" :event-id="event.id" :assignees="assignees" @saved="closeEditor" @cancel="closeEditor" />
             <div class="ea-task-status-filters" role="group" aria-label="Filter tasks by status">
                 <button v-for="(label, value) in statuses" :key="value" type="button" :aria-pressed="filters.status === value" :disabled="search.processing" @click="search.status = value; applyFilters()">{{ label }}</button>

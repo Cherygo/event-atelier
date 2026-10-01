@@ -13,6 +13,7 @@ use App\Http\Controllers\EventSharePreviewController;
 use App\Http\Controllers\EventSharingController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTaskStatusController;
+use App\Http\Controllers\EventTaskTemplateController;
 use App\Http\Controllers\EventVendorComparisonController;
 use App\Http\Controllers\EventVendorController;
 use App\Http\Controllers\ProfileController;
@@ -49,6 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/events/{event}/expenses/{expense}/payments', [EventExpensePaymentController::class, 'store'])->scopeBindings()->name('events.expenses.payments.store');
     Route::delete('/events/{event}/expenses/{expense}/payments/{payment}', [EventExpensePaymentController::class, 'destroy'])->scopeBindings()->name('events.expenses.payments.destroy');
     Route::resource('events.tasks', EventTaskController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
+    Route::post('/events/{event}/task-templates', [EventTaskTemplateController::class, 'store'])->name('events.task-templates.store');
     Route::resource('events.vendors', EventVendorController::class)->only(['index', 'store', 'update', 'destroy'])->scoped();
     Route::get('/events/{event}/vendors/compare', EventVendorComparisonController::class)->name('events.vendors.compare');
     Route::patch('/events/{event}/tasks/{task}/status', [EventTaskStatusController::class, 'update'])->scopeBindings()->name('events.tasks.status');

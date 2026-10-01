@@ -6,6 +6,7 @@ use App\Http\Requests\SaveEventTaskRequest;
 use App\Models\Event;
 use App\Models\EventTask;
 use App\TaskStatus;
+use App\TaskTemplateCatalog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ use Inertia\Response;
 
 class EventTaskController extends Controller
 {
-    public function index(Request $request, Event $event): Response
+    public function index(Request $request, Event $event, TaskTemplateCatalog $catalog): Response
     {
         $event->load('members');
         Gate::authorize('view', $event);
@@ -53,7 +54,9 @@ class EventTaskController extends Controller
         }
 
         return Inertia::render('Events/Tasks', [
-            'event' => $event->only(['id', 'name']),
+            'event' => $event->only(['id', 'name', 'type', 'event_date']),
+            'templates' => $request->user()->can('editPlanning', $event) ? $catalog->all() : [],
+            'templateKeys' => $request->user()->can('editPlanning', $event) ? $event->tasks()->whereNotNull('template_key')->pluck('template_key') : [],
             'tasks' => $tasks->latest('id')->paginate(20)->withQueryString(),
             'filters' => ['search' => $filters['search'] ?? '', 'status' => $status, 'due' => $due, 'sort' => $sort],
             'today' => $today,
