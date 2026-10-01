@@ -49,9 +49,15 @@ Organization-wide administration, enterprise billing, vendor marketplaces or por
 
 ### Implementation status
 
-The repository contains a Laravel authentication scaffold and interactive design previews. Workspace and homepage previews use sample data. Their planning interactions do not establish completed backend features or persistence.
+The application has persisted, event-scoped workspaces with open registration, authentication, sessions, ownership, collaborator roles, and email invitations for registered or new users. Tasks support categories, statuses, due dates, assignees, and overview metrics. Vendors support quotes, shortlisting, booking status, and side-by-side comparison. Budgets support categorized expenses, estimates, actual costs, manual payment records, forecasts, and overview summaries; the application does not process payments.
 
-The user selected one cohesive homepage and workspace combining directions 1 (Editorial) and 2 (Estate), with distinctive design balanced against practical usability. That combined interactive sample now replaces the alternative previews. Wedding and corporate examples have separate temporary task, vendor, and sharing state; planning persistence and production workspace workflows remain outstanding.
+Owners can configure, preview, publish, replace, and revoke read-only shared planning pages. Guests receive only explicitly selected information. Budget sharing is off by default; internal notes, contacts, assignees, expense details, and payment records are never included. Ownership transfer revokes existing public links. Public sharing controls are owner-only, separate from collaborator permissions.
+
+The user-selected Editorial–Estate design is implemented across the homepage, authentication, and responsive workspace. The separate interactive demo still uses illustrative, temporary data; it is not the persisted workspace.
+
+The current delivery stage is event-type task templates: optional wedding, corporate, and private-event starter checklists, selection before import, optional event-relative deadline suggestions, editable imported tasks, and duplicate-import protection. Creating an empty workspace remains supported. Templates are suggestions, not mandatory planning requirements.
+
+Launch preparation follows: end-to-end journeys, accessibility and mobile checks, security and production configuration, real email delivery, backups, and deployment. Local Docker development and a production image exist; this does not establish a deployed or launch-ready service. Access remains free; enterprise features, billing, and platform administration stay deferred.
 
 ### Open decisions
 
@@ -76,6 +82,9 @@ These are user-established commitments, not a new design specification. Detailed
 - Cohesive homepage: `resources/js/Components/HomePreview.vue`.
 - Shared visual system: `resources/css/atelier.css`, `resources/js/Components/AtelierBrand.vue`, and `resources/js/Components/AtelierIcon.vue`.
 - Illustrative event data: `resources/js/atelierDemo.js`.
+- Persisted workflows: `app/Http/Controllers/Event*Controller.php` and `resources/js/Pages/Events/`.
+- Public sharing boundary: `app/SharedEventData.php` and `resources/js/Pages/Shared/Show.vue`.
+- Regression coverage: `tests/Feature/` and `tests/Unit/`; operational setup and email-testing instructions: `README.md`.
 - Sample workspace illustration: `resources/js/Components/PlanningIllustration.vue`.
 - Preview photography: `public/images/preview-estate.jpg`, `public/images/preview-garden.jpg`, and `public/images/preview-table.jpg`.
 - The preview names, vendors, budgets, dates, and progress figures are illustrative, not customer evidence.
