@@ -55,9 +55,9 @@ Owners can configure, preview, publish, replace, and revoke read-only shared pla
 
 The user-selected Editorial–Estate design is implemented across the homepage, authentication, and responsive workspace. The separate interactive demo still uses illustrative, temporary data; it is not the persisted workspace.
 
-The current delivery stage is event-type task templates: optional wedding, corporate, and private-event starter checklists, selection before import, optional event-relative deadline suggestions, editable imported tasks, and duplicate-import protection. Creating an empty workspace remains supported. Templates are suggestions, not mandatory planning requirements.
+Event-type task templates are implemented: optional wedding, corporate, and private-event starter checklists, selection before import, optional event-relative deadline suggestions, editable imported tasks, and duplicate-import protection. Creating an empty workspace remains supported. Templates are suggestions, not mandatory planning requirements. Owners, planners/admins, and editors can import; viewers cannot. Suggested dates are opt-in, past suggestions remain unscheduled, and imported dates do not move automatically when the event date changes. Renaming or completing an imported task does not make it importable again; deleting it does.
 
-Launch preparation follows: end-to-end journeys, accessibility and mobile checks, security and production configuration, real email delivery, backups, and deployment. Local Docker development and a production image exist; this does not establish a deployed or launch-ready service. Access remains free; enterprise features, billing, and platform administration stay deferred.
+The next stage is launch preparation: end-to-end journeys, accessibility and mobile checks, security and production configuration, real email delivery, backups, and a deployment plan. Hosting and deployment require an explicit decision before execution. Local Docker development and a production image exist; this does not establish a deployed or launch-ready service. Access remains free; enterprise features, billing, and platform administration stay deferred.
 
 ### Open decisions
 
