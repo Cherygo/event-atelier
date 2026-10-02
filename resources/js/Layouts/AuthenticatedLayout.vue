@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import AtelierBrand from '@/Components/AtelierBrand.vue';
 import AtelierIcon from '@/Components/AtelierIcon.vue';
@@ -8,6 +8,8 @@ import '../../css/atelier.css';
 const showingNavigation = ref(false);
 const isMobile = ref(false);
 const menuButton = ref(null);
+const sidebar = ref(null);
+const mobileNavigationOpen = computed(() => isMobile.value && showingNavigation.value);
 
 const syncMobileState = () => {
     isMobile.value = window.matchMedia('(max-width: 800px)').matches;
@@ -19,18 +21,36 @@ const syncMobileState = () => {
 
 const closeNavigation = () => {
     showingNavigation.value = false;
-    nextTick(() => menuButton.value?.focus());
+    if (isMobile.value) {
+        nextTick(() => menuButton.value?.focus());
+    }
 };
 
 const openNavigation = async () => {
     showingNavigation.value = true;
     await nextTick();
-    document.querySelector('.ea-app-sidebar a')?.focus();
+    sidebar.value?.querySelector('a')?.focus();
 };
 
 const handleKeydown = (event) => {
-    if (event.key === 'Escape' && showingNavigation.value) {
+    if (!mobileNavigationOpen.value) return;
+
+    if (event.key === 'Escape') {
+        event.preventDefault();
         closeNavigation();
+    } else if (event.key === 'Tab') {
+        const controls = [...sidebar.value.querySelectorAll('a[href], button:not([disabled])')]
+            .filter(control => control.getClientRects().length);
+        const first = controls[0];
+        const last = controls.at(-1);
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first?.focus();
+        }
     }
 };
 
@@ -53,9 +73,9 @@ const navigation = [
 
 <template>
     <div class="ea-app">
-        <a class="ea-skip" href="#main-content">Skip to content</a>
+        <a class="ea-skip" href="#main-content" :inert="mobileNavigationOpen">Skip to content</a>
 
-        <aside class="ea-app-sidebar" :class="{ 'is-open': showingNavigation }" :inert="isMobile && !showingNavigation">
+        <div id="workspace-navigation" ref="sidebar" class="ea-app-sidebar" :class="{ 'is-open': showingNavigation }" :role="isMobile ? 'dialog' : 'complementary'" :aria-modal="mobileNavigationOpen ? true : undefined" aria-label="Workspace navigation" :inert="isMobile && !showingNavigation">
             <div class="ea-app-brand-row">
                 <AtelierBrand />
                 <button class="ea-app-close" type="button" aria-label="Close navigation" @click="closeNavigation">
@@ -64,7 +84,7 @@ const navigation = [
             </div>
 
             <nav class="ea-app-nav" aria-label="Main navigation">
-                <Link v-for="item in navigation" :key="item.route" :href="route(item.route)" :class="{ active: route().current(item.route === 'events.index' ? 'events.*' : item.route) }" @click="showingNavigation = false">
+                <Link v-for="item in navigation" :key="item.route" :href="route(item.route)" :class="{ active: route().current(item.route === 'events.index' ? 'events.*' : item.route) }" @click="closeNavigation">
                     <AtelierIcon :name="item.icon" />
                     {{ item.label }}
                 </Link>
@@ -83,12 +103,12 @@ const navigation = [
                     </div>
                 </div>
             </div>
-        </aside>
+        </div>
 
-        <div class="ea-app-stage">
+        <div class="ea-app-stage" :inert="mobileNavigationOpen">
             <header class="ea-app-mobile-header">
                 <AtelierBrand />
-                <button ref="menuButton" class="ea-icon-button" type="button" aria-label="Open navigation" :aria-expanded="showingNavigation" @click="openNavigation">
+                <button ref="menuButton" class="ea-icon-button" type="button" aria-label="Open navigation" aria-controls="workspace-navigation" :aria-expanded="showingNavigation" @click="openNavigation">
                     <AtelierIcon name="menu" />
                 </button>
             </header>
