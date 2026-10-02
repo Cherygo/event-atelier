@@ -56,6 +56,43 @@ composer run dev
 
 The `.env.example` defaults connect to the development database at `127.0.0.1:5432`, using database/user `event_atelier` and password `local-development-password`. Keep `DB_PASSWORD` consistent with the database's initialized password. Set `FORWARD_DB_PORT` and the host's `DB_PORT` together if port 5432 is occupied. The Docker application connects over the internal network; both workflows share the same PostgreSQL data. The development database port is bound to loopback only. Existing SQLite files are not imported automatically.
 
+## Local data safety and recovery
+
+`docker compose down` stops the application without deleting its volumes. Do not use `down --volumes`, `migrate:fresh`, or database-reset commands on an instance whose data you want to keep. Keep the same application key: shared links are encrypted at rest and need that key to remain usable.
+
+For a local backup, run these commands from the project directory. They copy the database and storage outside the repository. Use a new filename for each backup; the copy commands can overwrite files with the same name.
+
+```sh
+docker compose exec -T database pg_dump -U event_atelier -d event_atelier -Fc -f /tmp/event-atelier.dump
+docker compose cp database:/tmp/event-atelier.dump ../event-atelier.dump
+docker compose exec -T app tar -czf /tmp/event-atelier-storage.tar.gz -C /var/www/html/storage .
+docker compose cp app:/tmp/event-atelier-storage.tar.gz ../event-atelier-storage.tar.gz
+```
+
+Keep those files private along with your local `.env` and any Compose overrides. The storage archive includes the generated Docker application key when that key is in use. If you supplied `APP_KEY` or `DOCKER_APP_KEY` yourself, retain it separately. Database dumps contain account and planning data; do not attach them to issues or commit them.
+
+Test a database restore into a **new, separate database**, not over your working copy:
+
+```sh
+docker compose cp ../event-atelier.dump database:/tmp/event-atelier-restore.dump
+docker compose exec -T database createdb -U event_atelier event_atelier_restore_check
+docker compose exec -T database pg_restore -U event_atelier -d event_atelier_restore_check --no-owner --exit-on-error /tmp/event-atelier-restore.dump
+docker compose exec -T database psql -U event_atelier -d event_atelier_restore_check -c 'SELECT COUNT(*) FROM events;'
+```
+
+This does not switch the app to the restored database. If the check database already exists, choose a different name rather than overwriting it. For a full recovery, restore the database, matching storage, and original key together in a separate instance before replacing anything in the working instance.
+
+### Quick evaluation checklist
+
+1. Register and create an event. Return to the homepage and use My events to confirm the session is retained.
+2. Open Tasks, preview a template, select a few tasks, and import. Reopening should mark those tasks as already added. Edit and complete a task.
+3. Add vendors and compare them. Configure a budget, add an expense with an actual cost, then record a partial payment; check the overview totals. Recording a payment never sends money.
+4. Configure Mailtrap below, invite another email, and accept from a private browser window. Check editor versus viewer access.
+5. As the owner, publish a shared page and open it signed out. Only selected information should appear. Revoke the link and confirm it is unavailable.
+6. On a narrow screen, open the workspace menu. Tab and Shift+Tab should stay inside it; Escape should close it and return focus to the menu button.
+
+Account creation, recovery submissions, password confirmation/change, and account deletion allow ten attempts per minute per action (per IP for guests, per account when signed in). A 429 response means wait a minute and retry; normal navigation remains available. Login has its own failed-attempt limiter.
+
 ## Testing invitation emails with Mailtrap Sandbox
 
 Email testing uses [Mailtrap Email Sandbox](https://docs.mailtrap.io/email-sandbox/overview). Messages appear in your Mailtrap inbox, **not your real email inbox**. You do not need a verified sending domain or the Mailtrap Email Sending API.
