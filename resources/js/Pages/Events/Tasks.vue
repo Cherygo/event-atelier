@@ -34,7 +34,7 @@ const imported = async () => { choosingTemplate.value = false; await focusList()
         <Head :title="'Tasks · ' + event.name" />
         <template #description><p>A shared list for every next step.</p></template>
         <section class="ea-event-section" aria-labelledby="task-list-heading">
-            <div class="ea-task-toolbar">
+            <div class="ea-task-toolbar ea-task-list-toolbar">
                 <div><h2 id="task-list-heading" ref="heading" tabindex="-1">Tasks <span class="ea-section-count">{{ tasks.total }}</span></h2><p v-if="!canEdit" class="ea-task-readonly">You have read-only access to this plan.</p></div>
                 <div v-if="canEdit" class="ea-task-editor-actions">
                     <button v-if="!choosingTemplate" ref="templateButton" type="button" class="ea-button ea-button-outline" :disabled="adding" @click="openTemplates">Use a template</button>

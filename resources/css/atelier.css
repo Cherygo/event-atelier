@@ -3068,6 +3068,9 @@
 @media (prefers-reduced-motion: reduce) { .ea-app *, .ea-app *::before, .ea-app *::after { scroll-behavior: auto !important; transition: none !important; } }
 
 .ea-task-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.ea-task-list-toolbar, .ea-task-list-toolbar > .ea-task-editor-actions { flex-wrap: wrap; }
+.ea-task-list-toolbar > .ea-task-editor-actions { gap: 12px; }
+.ea-task-list-toolbar > .ea-task-editor-actions > button { flex-shrink: 0; }
 .ea-vendor-intro { max-width: 62ch; color: var(--ea-muted); margin: 0; }
 .ea-vendors .ea-task-toolbar { align-items: flex-start; }
 .ea-vendors .ea-task-toolbar > button { flex-shrink: 0; }
