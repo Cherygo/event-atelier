@@ -18,7 +18,7 @@ use App\Http\Controllers\EventVendorComparisonController;
 use App\Http\Controllers\EventVendorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SharedEventController;
-use App\Http\Middleware\ProtectSharedPage;
+use App\Http\Middleware\ProtectSensitivePage;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::redirect('/dashboard', '/events')->name('dashboard');
     Route::resource('events', EventController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']);
     Route::get('/events/{event}/overview', EventOverviewController::class)->name('events.overview');
-    Route::middleware(ProtectSharedPage::class)->group(function () {
+    Route::middleware(ProtectSensitivePage::class)->group(function () {
         Route::get('/events/{event}/sharing', [EventSharingController::class, 'index'])->name('events.sharing.index');
         Route::get('/events/{event}/sharing/preview', EventSharePreviewController::class)->name('events.sharing.preview');
         Route::post('/events/{event}/sharing/replace-link', [EventSharingController::class, 'rotate'])->middleware('throttle:10,1')->name('events.sharing.rotate');
@@ -62,9 +62,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/events/{event}/ownership', [EventOwnershipController::class, 'update'])->middleware('throttle:6,1')->name('events.ownership.update');
 });
 
-Route::get('/invitations/{token}', [AcceptEventInvitationController::class, 'show'])->middleware('throttle:60,1')->name('invitations.show');
-Route::get('/shared/{token}', SharedEventController::class)->middleware([ProtectSharedPage::class, 'throttle:60,1'])->name('shared.show');
-Route::post('/invitations/{token}', [AcceptEventInvitationController::class, 'store'])->middleware(['auth', 'throttle:10,1'])->name('invitations.accept');
+Route::get('/invitations/{token}', [AcceptEventInvitationController::class, 'show'])->middleware([ProtectSensitivePage::class, 'throttle:60,1'])->name('invitations.show');
+Route::get('/shared/{token}', SharedEventController::class)->middleware([ProtectSensitivePage::class, 'throttle:60,1'])->name('shared.show');
+Route::post('/invitations/{token}', [AcceptEventInvitationController::class, 'store'])->middleware([ProtectSensitivePage::class, 'auth', 'throttle:10,1'])->name('invitations.accept');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
