@@ -1,5 +1,9 @@
 # Event Atelier
 
+A local-first event planning project built with Laravel, Inertia, and Vue. It includes event workspaces, task templates, vendors, budgets, email invitations, and read-only share links. There is no hosted instance: each evaluator runs their own copy, with an independent database.
+
+Clone this repository and enter its directory before following the commands below. The repository is private, so GitHub access is required. Start with **Docker development**; host-based setup is optional.
+
 ## Docker development
 
 Requires Docker Engine with Docker Compose v2 or newer (Docker Desktop with WSL integration on Windows). PHP, Composer, and Node do not need to be installed on the host.
@@ -10,6 +14,8 @@ docker compose logs -f app vite queue
 ```
 
 Open localhost on port **8000**. The stack provides PHP 8.4 with Apache, Vite hot reload, PostgreSQL 17, a queue worker, and a scheduler. Setup installs the locked Composer/npm dependencies and runs migrations before services start. It uses `APP_KEY` from your local `.env` when available; otherwise, the development key is generated once and retained in the storage volume. No host `.env` is required.
+
+Register your own account, then create an event. No demo password, paid account, seed command, or email service is required to use the workspace. The homepage demo is illustrative and does not save its changes. Invitations and shared-page URLs only work against the instance that created them; `localhost` links cannot be sent to another machine and opened there.
 
 Source files are mounted live; dependencies, PostgreSQL data, storage, and Laravel's bootstrap cache use separate Docker volumes. On Linux, set `LOCAL_UID` and `LOCAL_GID` to your user's IDs when building if they differ from 1000. `APP_PORT`, `VITE_PORT`, `VITE_HMR_HOST`, and `VITE_USE_POLLING` can be overridden in your shell or local `.env`. Enable polling if file changes are missed under WSL or Docker Desktop. Mail is written to container logs by default.
 
@@ -29,13 +35,17 @@ Run the existing test suite with its isolated in-memory database, overriding the
 docker compose exec -e DB_CONNECTION=sqlite -e DB_DATABASE=:memory: \
   -e CACHE_STORE=array -e QUEUE_CONNECTION=sync -e SESSION_DRIVER=array -e MAIL_MAILER=array \
   app app-entrypoint env APP_ENV=testing vendor/bin/phpunit
+docker compose exec -T app npm test
+docker compose exec -T app npm run build
 ```
+
+Never point the test suite at the development database: tests refresh their database. The overrides above keep your event records untouched. The JavaScript tests use Node's built-in test runner and need no extra dependencies.
 
 Restart the queue after changing job code. After pulling changed dependency lockfiles, run `docker compose up -d --build --wait` again. `docker compose down` preserves data; adding `--volumes` deletes the development database and other persisted state. Stop Vite before returning to host-based development so its `public/hot` file is removed.
 
 ### Host-based development with PostgreSQL
 
-To run PHP and Vite on the host while using Docker for PostgreSQL:
+This alternative needs PHP 8.4 with the required extensions, Composer, and a Node version accepted by the locked Vite package. To run PHP and Vite on the host while using Docker for PostgreSQL:
 
 ```sh
 docker compose up -d --wait database
@@ -110,6 +120,8 @@ Invitation links expire after seven days. For local testing, open them on the ma
 If the app reports success but no message arrives in your Sandbox, confirm the SMTP settings belong to that inbox and that `MAIL_MAILER` is not still `log`. The `MAILTRAP_*` variables and `php artisan mailtrap:send-test` command belong to a separate Email Sending API test; they are **not used by the invitation button**.
 
 ## Production Docker image
+
+Deferred reference only: deployment is not part of the current local-release scope. Use the development stack above to evaluate or contribute to this project.
 
 The default Dockerfile target builds a standalone image with production Composer dependencies and compiled frontend assets. It runs as `www-data`, serves only `public/` on port 8080, and checks `/up` for health. Node, Composer, host secrets, local databases, and development dependencies are excluded from the final image.
 

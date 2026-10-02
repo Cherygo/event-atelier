@@ -4,6 +4,8 @@
 .env.backup
 .env.production
 .env.docker.production
+compose.override.yaml
+compose.override.yml
 .phpactor.json
 .phpunit.result.cache
 /.codex

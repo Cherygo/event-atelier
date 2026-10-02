@@ -28,6 +28,7 @@ Success means users can see what needs attention, compare their options, underst
 - Each event brings together its own planning records and collaborators.
 - Public planning pages and private collaborator workspaces are separate experiences.
 - The chosen implementation stack is Laravel, Inertia.js, Vue 3, JavaScript, and Tailwind CSS.
+- Local development is the current distribution model. Anyone evaluating the application runs their own checkout and database on their own machine. No hosted deployment is planned in the near term.
 
 ## Capabilities and Constraints
 
@@ -57,12 +58,12 @@ The user-selected Editorial–Estate design is implemented across the homepage, 
 
 Event-type task templates are implemented: optional wedding, corporate, and private-event starter checklists, selection before import, optional event-relative deadline suggestions, editable imported tasks, and duplicate-import protection. Creating an empty workspace remains supported. Templates are suggestions, not mandatory planning requirements. Owners, planners/admins, and editors can import; viewers cannot. Suggested dates are opt-in, past suggestions remain unscheduled, and imported dates do not move automatically when the event date changes. Renaming or completing an imported task does not make it importable again; deleting it does.
 
-The next stage is launch preparation: end-to-end journeys, accessibility and mobile checks, security and production configuration, real email delivery, backups, and a deployment plan. Hosting and deployment require an explicit decision before execution. Local Docker development and a production image exist; this does not establish a deployed or launch-ready service. Access remains free; enterprise features, billing, and platform administration stay deferred.
+The current stage is local-release hardening: reproducible setup, end-to-end journeys, accessibility and mobile checks, account and invitation security, sandbox email testing, and local data recovery guidance. Production hosting, deployment, and real email delivery are deferred. Existing production image files are retained for future use, not an active delivery target. Access remains free; enterprise features, billing, and platform administration stay deferred.
 
 ### Open decisions
 
 - Future enterprise scope and commercial model.
-- Production hosting, operational setup, and launch timing.
+- Whether hosted deployment is ever needed; it is not required for the local release.
 - Any specific accessibility conformance target beyond the confirmed laptop/mobile requirement.
 
 ## Brand Commitments
