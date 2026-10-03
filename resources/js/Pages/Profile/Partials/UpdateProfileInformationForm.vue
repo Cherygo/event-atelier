@@ -1,111 +1,54 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useAuthValidation } from '@/authValidation';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { nextTick } from 'vue';
 
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-});
+defineProps({ mustVerifyEmail: Boolean, status: String });
 
 const user = usePage().props.auth.user;
-
-const form = useForm({
-    name: user.name,
-    email: user.email,
-});
+const form = useForm({ name: user.name, email: user.email });
+const { errors, touch, validate } = useAuthValidation(form, false, ['name', 'email']);
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('#profile-details [aria-invalid="true"]')?.focus();
+};
+const updateProfile = () => {
+    if (form.processing) return;
+    if (!validate()) {
+        focusError();
+        return;
+    }
+    form.patch(route('profile.update'), { preserveScroll: true, onError: focusError });
+};
 </script>
 
 <template>
-    <section>
+    <section class="ea-account-section" aria-labelledby="profile-details-heading">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
-                Profile Information
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
-            </p>
+            <h2 id="profile-details-heading">Personal details</h2>
+            <p>Keep your name and sign-in email up to date.</p>
         </header>
-
-        <form
-            @submit.prevent="form.patch(route('profile.update'))"
-            class="mt-6 space-y-6"
-        >
-            <div>
+        <form id="profile-details" class="ea-account-form" novalidate @submit.prevent="updateProfile">
+            <div class="ea-form-field">
                 <InputLabel for="name" value="Name" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+                <TextInput id="name" v-model="form.name" required maxlength="255" autocomplete="name" :aria-invalid="Boolean(errors.name)" aria-describedby="profile-name-error" @blur="touch('name')" />
+                <InputError reserve-space id="profile-name-error" :message="errors.name" />
             </div>
-
-            <div>
+            <div class="ea-form-field">
                 <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <TextInput id="email" v-model="form.email" type="email" required maxlength="255" autocomplete="username" :aria-invalid="Boolean(errors.email)" aria-describedby="profile-email-error" @blur="touch('email')" />
+                <InputError reserve-space id="profile-email-error" :message="errors.email" />
             </div>
-
-            <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800">
-                    Your email address is unverified.
-                    <Link
-                        :href="route('verification.send')"
-                        method="post"
-                        as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Click here to re-send the verification email.
-                    </Link>
-                </p>
-
-                <div
-                    v-show="status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
-                >
-                    A new verification link has been sent to your email address.
-                </div>
+            <div v-if="mustVerifyEmail && user.email_verified_at === null" class="ea-account-hint">
+                <p>Your email address is unverified. <Link :href="route('verification.send')" method="post" as="button" class="ea-text-link">Resend verification email</Link></p>
+                <p v-if="status === 'verification-link-sent'" role="status">A new verification link has been sent to your email address.</p>
             </div>
-
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
+            <div class="ea-account-actions">
+                <button class="ea-button" :disabled="form.processing">{{ form.processing ? 'Saving details…' : 'Save details' }}</button>
+                <p class="ea-account-result" role="status">{{ form.recentlySuccessful ? 'Your details have been saved.' : '' }}</p>
             </div>
         </form>
     </section>

@@ -1,121 +1,60 @@
 <script setup>
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useAuthValidation } from '@/authValidation';
 import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { nextTick } from 'vue';
 
-const passwordInput = ref(null);
-const currentPasswordInput = ref(null);
-
-const form = useForm({
-    current_password: '',
-    password: '',
-    password_confirmation: '',
-});
-
+const form = useForm({ current_password: '', password: '', password_confirmation: '' });
+const { errors, touch, validate, resetFeedback } = useAuthValidation(form, true, ['current_password', 'password', 'password_confirmation']);
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('#profile-password [aria-invalid="true"]')?.focus();
+};
 const updatePassword = () => {
+    if (form.processing) return;
+    if (!validate()) {
+        focusError();
+        return;
+    }
     form.put(route('password.update'), {
         preserveScroll: true,
-        onSuccess: () => form.reset(),
-        onError: () => {
-            if (form.errors.password) {
-                form.reset('password', 'password_confirmation');
-                passwordInput.value.focus();
-            }
-            if (form.errors.current_password) {
-                form.reset('current_password');
-                currentPasswordInput.value.focus();
-            }
+        onSuccess: () => {
+            form.reset();
+            resetFeedback();
         },
+        onError: focusError,
     });
 };
 </script>
 
 <template>
-    <section>
+    <section class="ea-account-section" aria-labelledby="profile-password-heading">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
-                Update Password
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-600">
-                Ensure your account is using a long, random password to stay
-                secure.
-            </p>
+            <h2 id="profile-password-heading">Password</h2>
+            <p>Choose a long, unique password that you don’t use elsewhere.</p>
         </header>
-
-        <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="current_password" value="Current Password" />
-
-                <TextInput
-                    id="current_password"
-                    ref="currentPasswordInput"
-                    v-model="form.current_password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                />
-
-                <InputError
-                    :message="form.errors.current_password"
-                    class="mt-2"
-                />
+        <form id="profile-password" class="ea-account-form" novalidate @submit.prevent="updatePassword">
+            <div class="ea-form-field">
+                <InputLabel for="current_password" value="Current password" />
+                <TextInput id="current_password" v-model="form.current_password" type="password" required autocomplete="current-password" :aria-invalid="Boolean(errors.current_password)" aria-describedby="current-password-error" @blur="touch('current_password')" />
+                <InputError reserve-space id="current-password-error" :message="errors.current_password" />
             </div>
-
-            <div>
-                <InputLabel for="password" value="New Password" />
-
-                <TextInput
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-
-                <InputError :message="form.errors.password" class="mt-2" />
+            <div class="ea-form-field">
+                <InputLabel for="password" value="New password" />
+                <TextInput id="password" v-model="form.password" type="password" required autocomplete="new-password" :aria-invalid="Boolean(errors.password)" aria-describedby="new-password-hint new-password-error" @blur="touch('password')" />
+                <p id="new-password-hint" class="ea-account-hint">Use at least 8 characters.</p>
+                <InputError reserve-space id="new-password-error" :message="errors.password" />
             </div>
-
-            <div>
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    :message="form.errors.password_confirmation"
-                    class="mt-2"
-                />
+            <div class="ea-form-field">
+                <InputLabel for="password_confirmation" value="Confirm new password" />
+                <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password" required autocomplete="new-password" :aria-invalid="Boolean(errors.password_confirmation)" aria-describedby="confirm-password-error" @blur="touch('password_confirmation')" />
+                <InputError reserve-space id="confirm-password-error" :message="errors.password_confirmation" />
             </div>
-
-            <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
-
-                <Transition
-                    enter-active-class="transition ease-in-out"
-                    enter-from-class="opacity-0"
-                    leave-active-class="transition ease-in-out"
-                    leave-to-class="opacity-0"
-                >
-                    <p
-                        v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
-                    >
-                        Saved.
-                    </p>
-                </Transition>
+            <div class="ea-account-actions">
+                <button class="ea-button" :disabled="form.processing">{{ form.processing ? 'Updating password…' : 'Update password' }}</button>
+                <p class="ea-account-result" role="status">{{ form.recentlySuccessful ? 'Your password has been updated.' : '' }}</p>
             </div>
         </form>
     </section>
