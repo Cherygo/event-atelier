@@ -19,10 +19,12 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 const dialog = ref();
 const showSlot = ref(props.show);
+let closeTimer;
 
 watch(
     () => props.show,
     () => {
+        clearTimeout(closeTimer);
         if (props.show) {
             document.body.style.overflow = 'hidden';
             showSlot.value = true;
@@ -31,7 +33,7 @@ watch(
         } else {
             document.body.style.overflow = '';
 
-            setTimeout(() => {
+            closeTimer = setTimeout(() => {
                 dialog.value?.close();
                 showSlot.value = false;
             }, 200);
@@ -46,7 +48,7 @@ const close = () => {
 };
 
 const closeOnEscape = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && props.show) {
         e.preventDefault();
 
         if (props.show) {
@@ -58,6 +60,7 @@ const closeOnEscape = (e) => {
 onMounted(() => document.addEventListener('keydown', closeOnEscape));
 
 onUnmounted(() => {
+    clearTimeout(closeTimer);
     document.removeEventListener('keydown', closeOnEscape);
 
     document.body.style.overflow = '';
@@ -97,7 +100,7 @@ const maxWidthClass = computed(() => {
                     @click="close"
                 >
                     <div
-                        class="absolute inset-0 bg-gray-500 opacity-75"
+                        class="ea-modal-backdrop absolute inset-0"
                     />
                 </div>
             </Transition>
@@ -112,7 +115,7 @@ const maxWidthClass = computed(() => {
             >
                 <div
                     v-show="show"
-                    class="mb-6 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full"
+                    class="ea-modal-panel mb-6 transform overflow-hidden rounded-lg shadow-xl transition-all sm:mx-auto sm:w-full"
                     :class="maxWidthClass"
                 >
                     <slot v-if="showSlot" />
