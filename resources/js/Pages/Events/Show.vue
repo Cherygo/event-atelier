@@ -2,6 +2,7 @@
 import { Head, useForm } from '@inertiajs/vue3';
 import EventLayout from '@/Layouts/EventLayout.vue';
 import InputError from '@/Components/InputError.vue';
+import { formatEventDate } from '@/dateFormat';
 
 const props = defineProps({ event: { type: Object, required: true }, role: String, can: { type: Object, required: true } });
 const form = useForm({
@@ -53,7 +54,7 @@ const deleteEvent = () => deletion.delete(route('events.destroy', props.event.id
             </form>
             <dl v-else class="ea-event-facts">
                 <div><dt>Occasion</dt><dd>{{ types[event.type] }}</dd></div>
-                <div><dt>Date</dt><dd>{{ event.event_date?.slice(0, 10) || 'Not set yet' }}</dd></div>
+                <div><dt>Date</dt><dd>{{ formatEventDate(event.event_date) || 'Not set yet' }}</dd></div>
                 <div><dt>Location</dt><dd>{{ event.location || 'Not set yet' }}</dd></div>
                 <div><dt>Guest count</dt><dd>{{ event.guest_count || 'Not set yet' }}</dd></div>
             </dl>

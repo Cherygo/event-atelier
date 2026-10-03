@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AtelierIcon from '@/Components/AtelierIcon.vue';
+import { formatEventDate } from '@/dateFormat';
 
 const props = defineProps({ events: { type: Array, required: true } });
 
@@ -28,7 +29,7 @@ const eventCountLabel = computed(() => props.events.length === 1 ? '1 event in p
                     <div class="ea-event-record-type">{{ displayType(event.type) }}</div>
                     <div class="ea-event-record-main">
                         <h2><Link :href="route('events.overview', event.id)" class="ea-event-name-link">{{ event.name }}</Link></h2>
-                        <p><span v-if="event.event_date">{{ event.event_date }}</span><span v-if="event.event_date && event.location"> · </span><span v-if="event.location">{{ event.location }}</span><span v-if="!event.event_date && !event.location">Details can be added as your plan takes shape.</span></p>
+                        <p><time v-if="event.event_date" :datetime="event.event_date.slice(0, 10)">{{ formatEventDate(event.event_date) }}</time><span v-if="event.event_date && event.location"> · </span><span v-if="event.location">{{ event.location }}</span><span v-if="!event.event_date && !event.location">Details can be added as your plan takes shape.</span></p>
                     </div>
                     <div class="ea-event-record-meta"><span v-if="event.guest_count">{{ event.guest_count }} guests</span><span v-else>Workspace setup</span></div>
                 </article>
