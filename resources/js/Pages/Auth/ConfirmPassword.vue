@@ -6,18 +6,26 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { nextTick } from 'vue';
+import { useAuthValidation } from '@/authValidation';
 
 const form = useForm({
     password: '',
 });
+const { errors, touch, validate } = useAuthValidation(form, false, ['password']);
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+};
 
 const submit = () => {
+    if (form.processing) return;
+    if (!validate()) {
+        focusError();
+        return;
+    }
     form.post(route('password.confirm'), {
-        onFinish: () => form.reset(),
-        onError: async () => {
-            await nextTick();
-            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
-        },
+        onSuccess: () => form.reset(),
+        onError: focusError,
     });
 };
 </script>
@@ -31,7 +39,7 @@ const submit = () => {
             <p>This area holds private event details. Confirm your password to continue.</p>
         </header>
 
-        <form class="ea-auth-form" @submit.prevent="submit">
+        <form class="ea-auth-form" novalidate @submit.prevent="submit">
             <div class="ea-auth-field">
                 <InputLabel for="password" value="Password" />
                 <TextInput
@@ -39,13 +47,14 @@ const submit = () => {
                     type="password"
                     class="mt-1 block w-full"
                     v-model="form.password"
+                    @blur="touch('password')"
                     required
                     autocomplete="current-password"
                     autofocus
-                    :aria-invalid="Boolean(form.errors.password)"
-                    :aria-describedby="form.errors.password ? 'confirm-password-error' : undefined"
+                    :aria-invalid="Boolean(errors.password)"
+                    :aria-describedby="errors.password ? 'confirm-password-error' : undefined"
                 />
-                <InputError id="confirm-password-error" :message="form.errors.password" />
+                <InputError reserve-space id="confirm-password-error" :message="errors.password" />
             </div>
 
             <div class="ea-auth-actions">

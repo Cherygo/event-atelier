@@ -6,6 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { nextTick } from 'vue';
+import { useAuthValidation } from '@/authValidation';
 
 defineProps({
     status: {
@@ -16,13 +17,20 @@ defineProps({
 const form = useForm({
     email: '',
 });
+const { errors, touch, validate } = useAuthValidation(form, false, ['email']);
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+};
 
 const submit = () => {
+    if (form.processing) return;
+    if (!validate()) {
+        focusError();
+        return;
+    }
     form.post(route('password.email'), {
-        onError: async () => {
-            await nextTick();
-            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
-        },
+        onError: focusError,
     });
 };
 </script>
@@ -40,7 +48,7 @@ const submit = () => {
             {{ status }}
         </div>
 
-        <form class="ea-auth-form" @submit.prevent="submit">
+        <form class="ea-auth-form" novalidate @submit.prevent="submit">
             <div class="ea-auth-field">
                 <InputLabel for="email" value="Email" />
 
@@ -49,14 +57,15 @@ const submit = () => {
                     type="email"
                     class="block w-full"
                     v-model="form.email"
+                    @blur="touch('email')"
                     required
                     autofocus
                     autocomplete="username"
-                    :aria-invalid="Boolean(form.errors.email)"
-                    :aria-describedby="form.errors.email ? 'forgot-email-error' : undefined"
+                    :aria-invalid="Boolean(errors.email)"
+                    :aria-describedby="errors.email ? 'forgot-email-error' : undefined"
                 />
 
-                <InputError id="forgot-email-error" :message="form.errors.email" />
+                <InputError reserve-space id="forgot-email-error" :message="errors.email" />
             </div>
 
             <div class="ea-auth-actions">

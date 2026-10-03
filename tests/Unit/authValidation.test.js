@@ -56,3 +56,39 @@ test('editing a login password clears the previous credential error', async () =
     await nextTick();
     assert.equal(errors.value.email, '');
 });
+
+test('recovery validates only its selected fields and keeps token errors when passwords change', () => {
+    const form = reactive({
+        email: 'person@example.com', password: '', password_confirmation: '', errors: {},
+        clearErrors(field) { delete this.errors[field]; },
+    });
+    const emailOnly = useAuthValidation(form, false, ['email']);
+    assert.equal(emailOnly.validate(), true);
+    const reset = useAuthValidation(form, true, ['email', 'password', 'password_confirmation']);
+    assert.equal(reset.validate(), false);
+    form.password = 'new-password';
+    form.password_confirmation = 'new-password';
+    assert.equal(reset.validate(), true);
+    form.errors.email = 'This password reset token is invalid.';
+    form.password = 'another-password';
+    assert.equal(reset.errors.value.email, 'This password reset token is invalid.');
+    assert.ok(reset.errors.value.password_confirmation);
+});
+
+test('password changes require the current password and can reset feedback after success', () => {
+    const form = reactive({
+        current_password: '', password: '', password_confirmation: '', errors: {},
+        clearErrors(field) { delete this.errors[field]; },
+    });
+    const { errors, validate, resetFeedback } = useAuthValidation(form, true, ['current_password', 'password', 'password_confirmation']);
+    assert.equal(validate(), false);
+    assert.equal(errors.value.current_password, 'Enter your current password.');
+    form.current_password = 'old';
+    form.password = 'new-password';
+    form.password_confirmation = 'new-password';
+    assert.equal(validate(), true);
+    form.current_password = form.password = form.password_confirmation = '';
+    resetFeedback();
+    assert.deepEqual(errors.value, { current_password: '', password: '', password_confirmation: '' });
+    assert.equal(validate(), false);
+});

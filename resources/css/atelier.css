@@ -3417,6 +3417,7 @@
 .ea-auth-card-header h2 { margin: 0; font: 400 clamp(40px, 4vw, 58px)/1.02 var(--ea-display); letter-spacing: -.025em; text-wrap: balance; }
 .ea-auth-card-header p { max-width: 47ch; margin: 14px 0 0; color: var(--ea-muted); line-height: 1.65; }
 .ea-auth-form { display: grid; gap: 20px; }
+.ea-auth-hint { margin: 0; color: var(--ea-muted); font-size: 14px; }
 .ea-auth-field { display: grid; gap: 8px; align-content: start; }
 .ea-field-feedback { min-height: 20px; }
 .ea-field-feedback p { line-height: 20px; }

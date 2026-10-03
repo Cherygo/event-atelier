@@ -12,6 +12,7 @@ export function validateAuthField(field, values, registering = false) {
         if (!value) return 'Enter your password.';
         if (registering && [...value].length < 8) return 'Use at least 8 characters.';
     }
+    if (field === 'current_password' && !value) return 'Enter your current password.';
     if (field === 'password_confirmation') {
         if (!value) return 'Confirm your password.';
         if (value !== values.password) return 'Passwords must match.';
@@ -20,19 +21,19 @@ export function validateAuthField(field, values, registering = false) {
     return '';
 }
 
-export function useAuthValidation(form, registering = false) {
-    const fields = registering
+export function useAuthValidation(form, registering = false, selectedFields = null) {
+    const fields = selectedFields ?? (registering
         ? ['name', 'email', 'password', 'password_confirmation']
-        : ['email', 'password'];
+        : ['email', 'password']);
     const touched = reactive({});
     const touch = (field) => { touched[field] = true; };
 
     fields.forEach((field) => {
         watch(() => form[field], () => {
             form.clearErrors(field);
-            if (!registering && field === 'password') form.clearErrors('email');
+            if (!registering && field === 'password' && fields.includes('email')) form.clearErrors('email');
             touch(field);
-        });
+        }, { flush: 'sync' });
     });
 
     const errors = computed(() => Object.fromEntries(fields.map((field) => [
@@ -45,5 +46,7 @@ export function useAuthValidation(form, registering = false) {
         return !fields.some((field) => validateAuthField(field, form, registering));
     };
 
-    return { errors, touch, validate };
+    const resetFeedback = () => fields.forEach((field) => { delete touched[field]; });
+
+    return { errors, touch, validate, resetFeedback };
 }

@@ -4,8 +4,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { nextTick } from 'vue';
+import { useAuthValidation } from '@/authValidation';
 
 const props = defineProps({
     email: {
@@ -25,13 +26,21 @@ const form = useForm({
     password_confirmation: '',
 });
 
+const { errors, touch, validate } = useAuthValidation(form, true, ['email', 'password', 'password_confirmation']);
+const focusError = async () => {
+    await nextTick();
+    document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
+};
+
 const submit = () => {
+    if (form.processing) return;
+    if (!validate()) {
+        focusError();
+        return;
+    }
     form.post(route('password.store'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
-        onError: async () => {
-            await nextTick();
-            document.querySelector('.ea-auth-card [aria-invalid="true"]')?.focus();
-        },
+        onSuccess: () => form.reset('password', 'password_confirmation'),
+        onError: focusError,
     });
 };
 </script>
@@ -45,7 +54,7 @@ const submit = () => {
             <p>Set a new password, then return to your planning room.</p>
         </header>
 
-        <form class="ea-auth-form" @submit.prevent="submit">
+        <form class="ea-auth-form" novalidate @submit.prevent="submit">
             <div class="ea-auth-field">
                 <InputLabel for="email" value="Email" />
 
@@ -54,14 +63,15 @@ const submit = () => {
                     type="email"
                     class="block w-full"
                     v-model="form.email"
+                    @blur="touch('email')"
                     required
                     autofocus
                     autocomplete="username"
-                    :aria-invalid="Boolean(form.errors.email)"
-                    :aria-describedby="form.errors.email ? 'reset-email-error' : undefined"
+                    :aria-invalid="Boolean(errors.email)"
+                    :aria-describedby="errors.email ? 'reset-email-error' : undefined"
                 />
 
-                <InputError id="reset-email-error" :message="form.errors.email" />
+                <InputError reserve-space id="reset-email-error" :message="errors.email" />
             </div>
 
             <div class="ea-auth-field">
@@ -72,13 +82,15 @@ const submit = () => {
                     type="password"
                     class="block w-full"
                     v-model="form.password"
+                    @blur="touch('password')"
                     required
                     autocomplete="new-password"
-                    :aria-invalid="Boolean(form.errors.password)"
-                    :aria-describedby="form.errors.password ? 'reset-password-error' : undefined"
+                    :aria-invalid="Boolean(errors.password)"
+                    aria-describedby="reset-password-hint reset-password-error"
                 />
 
-                <InputError id="reset-password-error" :message="form.errors.password" />
+                <p id="reset-password-hint" class="ea-auth-hint">Use at least 8 characters.</p>
+                <InputError reserve-space id="reset-password-error" :message="errors.password" />
             </div>
 
             <div class="ea-auth-field">
@@ -92,15 +104,17 @@ const submit = () => {
                     type="password"
                     class="block w-full"
                     v-model="form.password_confirmation"
+                    @blur="touch('password_confirmation')"
                     required
                     autocomplete="new-password"
-                    :aria-invalid="Boolean(form.errors.password_confirmation)"
-                    :aria-describedby="form.errors.password_confirmation ? 'reset-password-confirmation-error' : undefined"
+                    :aria-invalid="Boolean(errors.password_confirmation)"
+                    :aria-describedby="errors.password_confirmation ? 'reset-password-confirmation-error' : undefined"
                 />
 
                 <InputError
+                    reserve-space
                     id="reset-password-confirmation-error"
-                    :message="form.errors.password_confirmation"
+                    :message="errors.password_confirmation"
                 />
             </div>
 
@@ -113,5 +127,8 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
+        <p class="ea-auth-alternate">
+            Link expired or already used? <Link :href="route('password.request')">Request a new reset link</Link>
+        </p>
     </GuestLayout>
 </template>
