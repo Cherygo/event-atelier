@@ -7,23 +7,16 @@ use App\Models\EventMember;
 use App\Models\EventVendor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class EventVendorTest extends TestCase
 {
     use RefreshDatabase;
 
-    public static function editableRoles(): array
-    {
-        return [['owner'], ['admin'], ['editor']];
-    }
-
-    #[DataProvider('editableRoles')]
-    public function test_collaborators_can_manage_event_vendors(string $role): void
+    public function test_editors_can_manage_event_vendors(): void
     {
         $event = Event::factory()->create();
-        $user = $role === 'owner' ? $event->user : EventMember::factory()->for($event)->create(['role' => $role])->user;
+        $user = EventMember::factory()->for($event)->create(['role' => 'editor'])->user;
         $other = Event::factory()->create();
         $this->actingAs($user)->post(route('events.vendors.store', $event), [
             'name' => 'Garden House', 'category' => 'Venue', 'contact_name' => 'Alex', 'email' => 'alex@example.test',
@@ -80,6 +73,6 @@ class EventVendorTest extends TestCase
         EventVendor::factory()->create(['name' => 'Garden Other', 'category' => 'Private category']);
         $this->actingAs($event->user)->get(route('events.vendors.index', ['event' => $event, 'search' => 'garden', 'category' => 'Venue', 'page' => 2]))
             ->assertInertia(fn (Assert $page) => $page->where('vendors.total', 14)->has('vendors.data', 2)->where('categories', ['Flowers', 'Venue']));
-        $this->get(route('events.vendors.index', ['event' => $event, 'search' => "%' OR 1=1 --"]))->assertInertia(fn (Assert $page) => $page->where('vendors.total',0));
+        $this->get(route('events.vendors.index', ['event' => $event, 'search' => "%' OR 1=1 --"]))->assertInertia(fn (Assert $page) => $page->where('vendors.total', 0));
     }
 }

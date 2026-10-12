@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\EventInvitation;
 use App\Models\EventMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Collection;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -14,13 +15,14 @@ class EventAccessTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_members_see_their_shared_events_but_not_unrelated_events(): void
+    public function test_users_see_owned_and_shared_events_but_not_unrelated_events(): void
     {
         $member = EventMember::factory()->create();
+        $ownEvent = Event::factory()->for($member->user)->create();
         $other = Event::factory()->create();
 
         $this->actingAs($member->user)->get('/events')->assertInertia(fn (Assert $page) => $page
-            ->has('events', 1)->where('events.0.id', $member->event_id));
+            ->has('events', 2)->where('events', fn (Collection $events): bool => $events->pluck('id')->sort()->values()->all() === [$member->event_id, $ownEvent->id]));
         $this->get(route('events.show', $other))->assertNotFound();
         $this->get(route('events.people', $other))->assertNotFound();
         $this->get(route('events.show', $member->event))->assertOk();

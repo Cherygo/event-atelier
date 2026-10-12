@@ -71,14 +71,4 @@ class SharedEventSummaryTest extends TestCase
         EventVendor::factory()->for($share->event)->count(51)->create(['status' => 'booked']);
         $this->get(route('shared.show', $share->token))->assertInertia(fn (Assert $page) => $page->where('plan.vendors.total', 51)->has('plan.vendors.items', 50));
     }
-
-    public function test_summary_choices_reject_non_boolean_input(): void
-    {
-        $event = Event::factory()->create();
-        $this->actingAs($event->user)->patch(route('events.sharing.update', $event), [
-            'show_date' => false, 'show_location' => false, 'public_note' => null,
-            'show_progress' => 'yes', 'show_vendors' => [], 'show_budget' => 'public',
-        ])->assertSessionHasErrors(['show_progress', 'show_vendors', 'show_budget']);
-        $this->assertDatabaseCount('event_shares', 0);
-    }
 }

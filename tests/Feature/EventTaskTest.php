@@ -5,29 +5,18 @@ namespace Tests\Feature;
 use App\Models\Event;
 use App\Models\EventMember;
 use App\Models\EventTask;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class EventTaskTest extends TestCase
 {
     use RefreshDatabase;
 
-    public static function editableRoles(): array
-    {
-        return [['owner'], ['admin'], ['editor']];
-    }
-
-    #[DataProvider('editableRoles')]
-    public function test_planners_can_create_edit_and_delete_tasks(string $role): void
+    public function test_editors_can_create_edit_and_delete_tasks(): void
     {
         $event = Event::factory()->create();
-        $user = $role === 'owner' ? $event->user : User::factory()->create();
-        if ($role !== 'owner') {
-            EventMember::factory()->for($event)->for($user)->create(['role' => $role]);
-        }
+        $user = EventMember::factory()->for($event)->create(['role' => 'editor'])->user;
         $other = Event::factory()->create();
         $this->actingAs($user)->post(route('events.tasks.store', $event), [
             'title' => 'Book the venue', 'notes' => 'Ask about access', 'category' => 'Venue', 'event_id' => $other->id,

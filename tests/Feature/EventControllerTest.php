@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Event;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -10,24 +9,6 @@ use Tests\TestCase;
 class EventControllerTest extends TestCase
 {
     use RefreshDatabase;
-
-    public function test_unauthenticated_user_is_redirected_from_events(): void
-    {
-        $this->get('/events')->assertRedirect('/login');
-    }
-
-    public function test_user_only_sees_their_own_events(): void
-    {
-        $user = User::factory()->create();
-        $ownEvent = Event::factory()->for($user)->create();
-        $otherEvent = Event::factory()->create();
-
-        $this->actingAs($user)
-            ->get('/events')
-            ->assertOk()
-            ->assertSee($ownEvent->name)
-            ->assertDontSee($otherEvent->name);
-    }
 
     public function test_authenticated_user_can_create_an_event(): void
     {

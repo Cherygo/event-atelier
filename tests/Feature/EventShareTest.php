@@ -25,18 +25,6 @@ class EventShareTest extends TestCase
         $this->assertArrayNotHasKey('token_hash', $share->toArray());
     }
 
-    public function test_revocation_destroys_the_link_but_preserves_content_choices(): void
-    {
-        $share = EventShare::factory()->create(['show_location' => true, 'public_note' => 'Welcome.']);
-        $share->publish();
-        $oldToken = $share->token;
-        $share->revoke();
-        $this->assertDatabaseHas('event_shares', ['id' => $share->id, 'token' => null, 'token_hash' => null, 'public_note' => 'Welcome.']);
-        $share->publish();
-        $this->assertNotSame($oldToken, $share->fresh()->token);
-        $this->assertTrue($share->fresh()->show_location);
-    }
-
     public function test_deleting_an_event_removes_its_share_link(): void
     {
         $share = EventShare::factory()->create();

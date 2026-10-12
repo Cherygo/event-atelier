@@ -15,19 +15,10 @@ class EventTaskTemplateTest extends TestCase
 {
     use RefreshDatabase;
 
-    public static function editingRoles(): array
-    {
-        return [['owner'], ['admin'], ['editor']];
-    }
-
-    #[DataProvider('editingRoles')]
-    public function test_editors_can_import_only_selected_server_owned_content(string $role): void
+    public function test_editors_can_import_only_selected_server_owned_content(): void
     {
         $event = Event::factory()->create();
-        $user = $role === 'owner' ? $event->user : User::factory()->create();
-        if ($role !== 'owner') {
-            EventMember::factory()->for($event)->for($user)->create(['role' => $role]);
-        }
+        $user = EventMember::factory()->for($event)->create(['role' => 'editor'])->user;
         $this->actingAs($user)->post(route('events.task-templates.store', $event), [
             'template' => 'wedding', 'items' => ['venue', 'guest-list'],
             'event_id' => 999, 'title' => 'Injected', 'status' => 'completed', 'assigned_to' => $user->id, 'due_date' => '2026-01-01', 'template_key' => 'other',

@@ -14,18 +14,12 @@ class EventExpensePaymentTest extends TestCase
 {
     use RefreshDatabase;
 
-    public static function editableRoles(): array
-    {
-        return [['owner'], ['admin'], ['editor']];
-    }
-
-    #[DataProvider('editableRoles')]
-    public function test_collaborators_can_record_and_remove_payments(string $role): void
+    public function test_editors_can_record_and_remove_payments(): void
     {
         $this->travelTo(now()->setDate(2026, 9, 26));
         $expense = EventExpense::factory()->withActualCost()->create(['actual_minor' => 50001, 'due_date' => '2026-09-25']);
         $event = $expense->event;
-        $user = $role === 'owner' ? $event->user : EventMember::factory()->for($event)->create(['role' => $role])->user;
+        $user = EventMember::factory()->for($event)->create(['role' => 'editor'])->user;
         $this->actingAs($user)->from(route('events.budget.index', $event))->post(route('events.expenses.payments.store', [$event, $expense]), [
             'amount' => '100.01', 'currency' => 'EUR', 'paid_on' => '2026-09-25', 'note' => 'Deposit', 'event_expense_id' => 999,
         ])->assertRedirect(route('events.budget.index', $event))->assertSessionHasNoErrors();

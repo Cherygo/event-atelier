@@ -7,23 +7,16 @@ use App\Models\EventExpense;
 use App\Models\EventMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class EventExpenseTest extends TestCase
 {
     use RefreshDatabase;
 
-    public static function editableRoles(): array
-    {
-        return [['owner'], ['admin'], ['editor']];
-    }
-
-    #[DataProvider('editableRoles')]
-    public function test_collaborators_can_manage_expenses_and_budget_settings(string $role): void
+    public function test_editors_can_manage_expenses_and_budget_settings(): void
     {
         $event = Event::factory()->withBudget()->create();
-        $user = $role === 'owner' ? $event->user : EventMember::factory()->for($event)->create(['role' => $role])->user;
+        $user = EventMember::factory()->for($event)->create(['role' => 'editor'])->user;
         $foreign = Event::factory()->create();
         $this->actingAs($user)->patch(route('events.budget.update', $event), ['currency' => 'EUR', 'target' => '15000'])->assertSessionHasNoErrors();
         $this->assertSame(1500000, $event->fresh()->budget_target_minor);

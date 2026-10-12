@@ -58,16 +58,19 @@ class EventSharingTest extends TestCase
 
     public function test_revoked_unknown_and_malformed_links_show_the_same_unavailable_page(): void
     {
-        $share = EventShare::factory()->create();
+        $share = EventShare::factory()->create(['show_location' => true, 'public_note' => 'Welcome.']);
         $share->publish();
         $oldUrl = route('shared.show', $share->token);
         $this->actingAs($share->event->user)->delete(route('events.sharing.destroy', $share->event))->assertRedirect();
-        $this->assertNull($share->fresh()->token_hash);
+        $this->assertDatabaseHas('event_shares', ['id' => $share->id, 'token' => null, 'token_hash' => null, 'show_location' => true, 'public_note' => 'Welcome.']);
         foreach ([$oldUrl, route('shared.show', str_repeat('a', 64)), route('shared.show', 'invalid')] as $url) {
             $response = $this->get($url)->assertNotFound()->assertInertia(fn (Assert $page) => $page->component('Shared/Show')->where('plan', null)->missing('auth'));
             $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
         }
         $this->post(route('events.sharing.store', $share->event))->assertRedirect();
+        $this->assertNotSame($oldUrl, route('shared.show', $share->fresh()->token));
+        $this->assertTrue($share->fresh()->show_location);
+        $this->assertSame('Welcome.', $share->fresh()->public_note);
         $this->get($oldUrl)->assertNotFound();
         $this->get(route('shared.show', $share->fresh()->token))->assertOk();
     }
@@ -104,8 +107,10 @@ class EventSharingTest extends TestCase
     {
         $event = Event::factory()->create();
         $this->actingAs($event->user)->patch(route('events.sharing.update', $event), [])->assertSessionHasErrors(['show_date', 'show_location', 'public_note']);
-        $this->patch(route('events.sharing.update', $event), ['show_date' => 'yes', 'show_location' => [], 'public_note' => str_repeat('x', 2001)])
-            ->assertSessionHasErrors(['show_date', 'show_location', 'public_note' => 'The public note field must not be greater than 2000 characters.']);
+        $this->patch(route('events.sharing.update', $event), [
+            'show_date' => 'yes', 'show_location' => [], 'public_note' => str_repeat('x', 2001),
+            'show_progress' => 'yes', 'show_vendors' => [], 'show_budget' => 'public',
+        ])->assertSessionHasErrors(['show_date', 'show_location', 'public_note' => 'The public note field must not be greater than 2000 characters.', 'show_progress', 'show_vendors', 'show_budget']);
         $this->assertDatabaseCount('event_shares', 0);
     }
 

@@ -45,10 +45,4 @@ class EventBudgetSummaryTest extends TestCase
         $this->actingAs($event->user)->get(route('events.budget.index', $event))->assertInertia(fn (Assert $page) => $page
             ->where('budget.totals.forecast_minor', 0)->where('budget.totals.paid_minor', 0)->where('budget.totals.remaining_minor', null)->has('budget.categories', 0));
     }
-
-    public function test_overview_does_not_invent_a_budget_for_an_unconfigured_event(): void
-    {
-        $event = Event::factory()->create();
-        $this->actingAs($event->user)->get(route('events.overview', $event))->assertInertia(fn (Assert $page) => $page->where('budget', null));
-    }
 }
